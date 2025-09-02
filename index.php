@@ -34,8 +34,7 @@
         <li class="nav-item"><a class="nav-link" href="#">Cart</a></li>
       </ul>
     </div>
-  </div>
-</nav>
+  </div></nav>
 
 <!-- ===== BODY ===== -->
 <main class="container my-5">
