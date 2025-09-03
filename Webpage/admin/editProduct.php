@@ -11,44 +11,45 @@ $id = $_GET['id'] ?? 0;
 
 // Handle update
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $productName = $_POST['productName'];
+    $name = $_POST['name'];
     $price = $_POST['price'];
     $qty = $_POST['qty'];
     $description = $_POST['description'];
-    $category = $_POST['category'];
 
-    $imgPath = "";
+    $updateImg = "";
     if (!empty($_FILES["image"]["name"])) {
-        $targetDir = "productImage/";
-        $imgPath = $targetDir . uniqid() . basename($_FILES["image"]["name"]);
+        $targetDir = "../lunchbox_images/";
+        $fileExt = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
+        $imgPath = $targetDir . uniqid("lunchbox_", true) . "." . $fileExt;
         move_uploaded_file($_FILES["image"]["tmp_name"], $imgPath);
 
         // delete old image
-        $stmt = $conn->prepare("SELECT imgPath FROM product WHERE productID = ?");
+        $stmt = $conn->prepare("SELECT image FROM lunchboxes WHERE id = ?");
         $stmt->execute([$id]);
         $old = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($old && file_exists($old['imgPath'])) unlink($old['imgPath']);
+        if ($old && file_exists($old['image'])) {
+            unlink($old['image']);
+        }
 
-        $updateImg = ", imgPath = :imgPath";
-    } else {
-        $updateImg = "";
+        $updateImg = ", image = :image";
     }
 
     try {
-        $sql = "UPDATE product SET productName = :productName, price = :price, qty = :qty,
-                description = :description, category = :category $updateImg
-                WHERE productID = :id";
+        $sql = "UPDATE lunchboxes 
+                SET name = :name, price = :price, stock_quantity = :qty, description = :description $updateImg 
+                WHERE id = :id";
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(":productName", $productName);
+        $stmt->bindParam(":name", $name);
         $stmt->bindParam(":price", $price);
         $stmt->bindParam(":qty", $qty);
         $stmt->bindParam(":description", $description);
-        $stmt->bindParam(":category", $category);
-        if ($updateImg) $stmt->bindParam(":imgPath", $imgPath);
+        if ($updateImg) {
+            $stmt->bindParam(":image", $imgPath);
+        }
         $stmt->bindParam(":id", $id);
         $stmt->execute();
 
-        $_SESSION['message'] = "✅ Product updated successfully!";
+        $_SESSION['message'] = "✅ Lunchbox updated successfully!";
         header("Location: viewProduct.php");
         exit;
     } catch (PDOException $e) {
@@ -56,53 +57,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// Fetch product info
-$stmt = $conn->prepare("SELECT * FROM product WHERE productID = ?");
+// Fetch lunchbox info
+$stmt = $conn->prepare("SELECT * FROM lunchboxes WHERE id = ?");
 $stmt->execute([$id]);
-$product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Fetch categories
-$stmt = $conn->prepare("SELECT * FROM category");
-$stmt->execute();
-$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$lunchbox = $stmt->fetch(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Product</title>
+    <title>Edit Lunchbox</title>
     <style>
         body { font-family: Poppins, sans-serif; background:#f5f5f5; padding:40px; }
         form { max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
-        input, textarea, select { width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:6px; }
+        input, textarea { width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:6px; }
         button { padding:10px 20px; background:#6a3e6f; color:#fff; border:none; border-radius:6px; font-weight:600; cursor:pointer; }
         button:hover { background:#4a284e; }
+        img { margin:10px 0; border-radius:6px; }
     </style>
 </head>
 <body>
-    <h2>Edit Product</h2>
+    <h2>Edit Lunchbox</h2>
     <form method="post" enctype="multipart/form-data">
-        <input type="text" name="productName" value="<?= htmlspecialchars($product['productName']) ?>" required>
-        <input type="number" step="0.01" name="price" value="<?= $product['price'] ?>" required>
-        <input type="number" name="qty" value="<?= $product['qty'] ?>" required>
-        <textarea name="description" required><?= htmlspecialchars($product['description']) ?></textarea>
-
-        <select name="category" required>
-            <?php foreach ($categories as $cat): ?>
-                <option value="<?= $cat['catId'] ?>" <?= $cat['catId']==$product['category']?"selected":"" ?>>
-                    <?= htmlspecialchars($cat['catName']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <input type="text" name="name" value="<?= htmlspecialchars($lunchbox['name']) ?>" required>
+        <input type="number" step="0.01" name="price" value="<?= $lunchbox['price'] ?>" required>
+        <input type="number" name="qty" value="<?= $lunchbox['stock_quantity'] ?>" required>
+        <textarea name="description" required><?= htmlspecialchars($lunchbox['description']) ?></textarea>
 
         <p>Current Image:</p>
-        <?php if ($product['imgPath']): ?>
-            <img src="<?= $product['imgPath'] ?>" width="120"><br>
+        <?php if (!empty($lunchbox['image'])): ?>
+            <img src="<?= $lunchbox['image'] ?>" width="120"><br>
         <?php endif; ?>
         <input type="file" name="image">
 
-        <button type="submit">Update Product</button>
+        <button type="submit">Update Lunchbox</button>
     </form>
 </body>
 </html>

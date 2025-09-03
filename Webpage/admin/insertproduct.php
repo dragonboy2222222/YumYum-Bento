@@ -7,32 +7,23 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
 
 require_once "../dbconnect.php";
 
-try {
-    $sql = "SELECT * FROM category";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $categories = $stmt->fetchAll();
-} catch (PDOException $e) {
-    echo $e->getMessage();
-}
-
 if (isset($_POST["insertBtn"])) {
     $name = $_POST["pname"];
     $price = $_POST["price"];
-    $category = $_POST["category"];
     $qty = $_POST["qty"];
     $description = $_POST["description"];
     $fileImage = $_FILES["productImage"];
-    $filePath = "productImage/" . basename($fileImage['name']);
+    $filePath = "../lunchbox_images/" . basename($fileImage['name']);
 
     if (move_uploaded_file($fileImage['tmp_name'], $filePath)) {
         try {
-            $sql = "INSERT INTO product VALUES (?,?,?,?,?,?,?)";
+            $sql = "INSERT INTO lunchboxes (name, description, price, image, stock_quantity) 
+                    VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $flag = $stmt->execute([null, $name, $category, $price, $qty, $description, $filePath]);
+            $flag = $stmt->execute([$name, $description, $price, $filePath, $qty]);
             $id = $conn->lastInsertId();
             if ($flag) {
-                $_SESSION['message'] = "✅ Product with ID $id inserted successfully!";
+                $_SESSION['message'] = "✅ Lunchbox with ID $id inserted successfully!";
                 header("Location: viewProduct.php");
                 exit;
             }
@@ -210,37 +201,30 @@ if (isset($_POST["insertBtn"])) {
         </div>
     </div>
 
+   
     <div class="main">
-        <h1>Insert Product</h1>
-        <div class="form-card">
-            <form action="insertProduct.php" method="post" enctype="multipart/form-data">
-                <label>Product Name</label>
-                <input type="text" name="pname" required>
+    <h1>Insert Lunchbox</h1>
+    <div class="form-card">
+        <form action="insertProduct.php" method="post" enctype="multipart/form-data">
+            <label>Lunchbox Name</label>
+            <input type="text" name="pname" required>
 
-                <label>Price</label>
-                <input type="number" step="0.01" name="price" required>
+            <label>Price</label>
+            <input type="number" step="0.01" name="price" required>
 
-                <label>Category</label>
-                <select name="category" required>
-                    <option value="">-- Choose Category --</option>
-                    <?php foreach ($categories as $cat): ?>
-                        <option value="<?= $cat['catId'] ?>"><?= htmlspecialchars($cat['catName']) ?></option>
-                    <?php endforeach; ?>
-                </select>
+            <label>Quantity (Stock)</label>
+            <input type="number" name="qty" required>
 
-                <label>Quantity</label>
-                <input type="number" name="qty" required>
+            <label>Description</label>
+            <textarea name="description" rows="4"></textarea>
 
-                <label>Description</label>
-                <textarea name="description" rows="4"></textarea>
+            <label>Lunchbox Image</label>
+            <input type="file" name="productImage" required>
 
-                <label>Product Image</label>
-                <input type="file" name="productImage" required>
-
-                <button type="submit" name="insertBtn">➕ Insert Product</button>
-            </form>
-        </div>
+            <button type="submit" name="insertBtn">➕ Insert Lunchbox</button>
+        </form>
     </div>
+</div>
 
 </body>
 </html>

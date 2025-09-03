@@ -8,26 +8,26 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
 require_once "../dbconnect.php";
 
 if (isset($_GET['id'])) {
-    $id = intval($_GET['id']); // safety
+    $id = intval($_GET['id']); // sanitize ID
 
     try {
-        // First get image path to delete file
-        $stmt = $conn->prepare("SELECT imgPath FROM product WHERE productID = ?");
+        // First get image path to delete the file
+        $stmt = $conn->prepare("SELECT image FROM lunchboxes WHERE id = ?");
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row && !empty($row['imgPath']) && file_exists($row['imgPath'])) {
-            unlink($row['imgPath']); // delete old image file
+        if ($row && !empty($row['image']) && file_exists($row['image'])) {
+            unlink($row['image']); // delete old image file
         }
 
-        // Delete product from DB
-        $sql = "DELETE FROM product WHERE productID = ?";
+        // Delete lunchbox from DB
+        $sql = "DELETE FROM lunchboxes WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$id]);
 
-        $_SESSION['message'] = "✅ Product deleted successfully!";
+        $_SESSION['message'] = "✅ Lunchbox deleted successfully!";
     } catch (PDOException $e) {
-        $_SESSION['message'] = "❌ Error deleting product: " . $e->getMessage();
+        $_SESSION['message'] = "❌ Error deleting lunchbox: " . $e->getMessage();
     }
 }
 
