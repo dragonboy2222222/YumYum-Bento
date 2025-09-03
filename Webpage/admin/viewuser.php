@@ -1,0 +1,285 @@
+<?php
+session_start();
+require_once("../dbconnect.php");
+
+if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
+    header("Location: ../login.php");
+    exit;
+}
+
+// Handle role update
+if (isset($_POST["updateRole"])) {
+    $userId = $_POST["userId"];
+    $newRole = $_POST["role"];
+
+    try {
+        $stmt = $conn->prepare("UPDATE users SET role = ? WHERE id = ?");
+        $stmt->execute([$newRole, $userId]);
+
+        $_SESSION['message'] = "✅ User role updated successfully!";
+        header("Location: viewuser.php");
+        exit;
+    } catch (PDOException $e) {
+        $_SESSION['message'] = "❌ Error updating role: " . $e->getMessage();
+    }
+}
+
+// Fetch all users
+$stmt = $conn->prepare("SELECT id, username, email, role FROM users ORDER BY id DESC");
+$stmt->execute();
+$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Flash message
+$message = "";
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    unset($_SESSION['message']);
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Users - Admin Panel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        :root {
+            --purple-dark: #4a284e;
+            --purple-medium: #6a3e6f;
+            --purple-light: #9e6fa0;
+            --cream: #f4f1e6;
+            --white: #ffffff;
+            --gray-dark: #333;
+            --gray-light: #f5f5f5;
+        }
+
+        /* Best practice: Apply box-sizing to all elements for consistent layout behavior */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--gray-light);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--purple-dark);
+            color: var(--white);
+            padding: 30px;
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--cream);
+        }
+
+        .sidebar a {
+            display: block;
+            color: var(--cream);
+            text-decoration: none;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: var(--purple-medium);
+            transform: translateX(5px);
+        }
+
+        .logout {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .main {
+            margin-left: 280px;
+            padding: 40px;
+            width: 100%; /* Changed to 100% for better responsiveness */
+            flex-grow: 1; /* Allows main content to fill remaining space */
+        }
+
+        h1 {
+            color: var(--purple-dark);
+            margin-bottom: 25px;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .table-container {
+            overflow-x: auto; /* Allows horizontal scrolling for the table */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--purple-light);
+            color: white;
+            white-space: nowrap; /* Prevents text from wrapping in headers */
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .role-admin {
+            color: green;
+            font-weight: 600;
+        }
+
+        .role-customer {
+            color: #333;
+        }
+
+        .role-form select {
+            padding: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-right: 5px;
+            font-size: 14px; /* Adjust font size for better fit */
+        }
+
+        .role-form button {
+            padding: 6px 12px;
+            background: var(--purple-medium);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .role-form button:hover {
+            background: var(--purple-light);
+        }
+
+        /* --- Responsive Styles --- */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column; /* Stacks sidebar and main content vertically */
+            }
+
+            .sidebar {
+                position: static; /* Removes fixed position */
+                width: 100%;
+                height: auto;
+                padding-bottom: 15px;
+            }
+
+            .main {
+                margin-left: 0; /* Removes the margin */
+                width: 100%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            th, td {
+                padding: 10px; /* Reduces table padding for smaller screens */
+                font-size: 14px; /* Makes text smaller to fit */
+            }
+
+            .role-form button {
+                padding: 5px 10px; /* Reduces button padding */
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Lunchbox Admin</h2>
+    <a href="dashboard.php">🍱 View Orders</a>
+    <a href="insertproduct.php">🥪 Manage Products</a>
+    <a href="viewuser.php" class="active">📋 View Users</a>
+    <a href="viewProduct.php">📦 Products</a>
+    <a href="#">⚙️ Settings</a>
+
+    <div class="logout">
+        <a href="../login.php">🚪 Logout</a>
+    </div>
+</div>
+
+<div class="main">
+    <h1>All Registered Users</h1>
+
+    <?php if ($message): ?>
+        <div class="message"><?= htmlspecialchars($message) ?></div>
+    <?php endif; ?>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($users as $user): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($user["id"]); ?></td>
+                        <td><?= htmlspecialchars($user["username"]); ?></td>
+                        <td><?= htmlspecialchars($user["email"]); ?></td>
+                        <td class="role-<?= $user["role"]; ?>"><?= ucfirst($user["role"]); ?></td>
+                        <td>
+                            <form method="post" class="role-form" style="display:inline;">
+                                <input type="hidden" name="userId" value="<?= $user["id"]; ?>">
+                                <select name="role">
+                                    <option value="customer" <?= $user["role"] === "customer" ? "selected" : "" ?>>Customer</option>
+                                    <option value="admin" <?= $user["role"] === "admin" ? "selected" : "" ?>>Admin</option>
+                                </select>
+                                <button type="submit" name="updateRole">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
