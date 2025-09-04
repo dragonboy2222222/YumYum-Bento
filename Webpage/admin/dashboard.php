@@ -6,19 +6,23 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
 }
 ?>
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Lunchbox Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
+        /* Define new color variables based on the previous design */
         :root {
-            --purple-dark: #4a284e;
-            --purple-medium: #6a3e6f;
-            --purple-light: #9e6fa0;
-            --cream: #f4f1e6;
+            --red-dark: #993333;
+            --red-medium: #cc3300;
+            --cream: #f8f4ec;
             --white: #ffffff;
             --gray-dark: #333333;
             --gray-light: #eeeeee;
@@ -32,14 +36,14 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--gray-light);
+            background-color: var(--cream);
             display: flex;
             min-height: 100vh;
         }
 
         .sidebar {
             width: 280px;
-            background-color: var(--purple-dark);
+            background-color: var(--red-dark);
             color: var(--white);
             padding: 30px;
             display: flex;
@@ -60,7 +64,7 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
 
         .sidebar a {
             display: block;
-            color: var(--cream);
+            color: var(--white);
             text-decoration: none;
             padding: 15px 20px;
             margin-bottom: 10px;
@@ -71,7 +75,7 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
 
         .sidebar a:hover,
         .sidebar a.active {
-            background-color: var(--purple-medium);
+            background-color: var(--red-medium);
             color: var(--white);
             transform: translateX(5px);
         }
@@ -84,13 +88,13 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
         }
 
         .logout a {
-            color: var(--cream);
+            color: var(--white);
             font-weight: 600;
             text-transform: uppercase;
         }
 
         .logout a:hover {
-            color: var(--white);
+            color: var(--cream);
         }
 
         .main {
@@ -100,7 +104,7 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
         }
 
         .main h1 {
-            color: var(--purple-dark);
+            color: var(--red-dark);
             margin-bottom: 25px;
             font-weight: 700;
         }
@@ -125,7 +129,7 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
         }
 
         .card h2 {
-            color: var(--purple-medium);
+            color: var(--red-medium);
             margin-bottom: 15px;
             font-size: 1.5rem;
         }
@@ -147,22 +151,20 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
         .card li:last-child {
             border-bottom: none;
         }
-
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <h2>Lunchbox Admin</h2>
-        <a href="dashboard.php" class="active">🍱 View Products</a>
-        <a href="insertproduct.php">🥪 Manage Products</a>
-        <a href="viewuser.php">📋 View Users</a>
-        <a href="viewProduct.php">📈 Products Reports</a>
-        <a href="#">⚙️ Settings</a>
-
-        <div class="logout">
-            <a href="../login.php">🚪 Logout</a>
-        </div>
+    <a href="dashboard.php" class="active">📊 Dashboard</a>
+    <a href="insertProduct.php" >🍱 Manage Lunchboxes</a>
+    <a href="viewUser.php">📋 View Users</a>
+    <a href="viewProduct.php" >📦 Lunchbox Reports</a>
+    <a href="#">⚙️ Settings</a>
+    <div class="logout">
+        <a href="../login.php">🚪 Logout</a>
+    </div>
     </div>
 
     <div class="main">
@@ -171,7 +173,7 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
         <div class="card-container">
             <div class="card">
                 <h2>Dashboard Overview</h2>
-                <p>Welcome to the Lunchbox Admin Panel. Here you can manage everything related to your e-commerce store, from orders to products and customer information.</p>
+                <p>Welcome to the Lunchbox Admin Panel. Here you can manage everything related to your e-commerce store, from orders and products to customer information and communication.</p>
             </div>
 
             <div class="card">
@@ -183,6 +185,27 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
                     <li>Revenue This Week: $1,250</li>
                 </ul>
             </div>
+            
+            <div class="card">
+                <h2>Recent Orders</h2>
+                <ul>
+                    <li>Order #12345 - **Pending**</li>
+                    <li>Order #12344 - **Shipped**</li>
+                    <li>Order #12343 - **Delivered**</li>
+                    <li>Order #12342 - **Pending**</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>Support Chats</h2>
+                <ul>
+                    <li>Chat with Customer A - **Active**</li>
+                    <li>Chat with Customer B - **Pending**</li>
+                    <li>Chat with Customer C - **Closed**</li>
+                    <li>Chat with Customer D - **Active**</li>
+                </ul>
+            </div>
+            
         </div>
     </div>
 

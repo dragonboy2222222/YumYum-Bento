@@ -42,40 +42,42 @@ if (isset($_POST["insertBtn"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Insert Product</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
         :root {
-            --purple-dark: #4a284e;
-            --purple-medium: #6a3e6f;
-            --purple-light: #9e6fa0;
-            --cream: #f4f1e6;
+            --red-dark: #993333;
+            --red-medium: #cc3300;
+            --cream: #f8f4ec;
             --white: #ffffff;
             --gray-dark: #333333;
             --gray-light: #eeeeee;
         }
 
-        /* Best practice: Apply box-sizing to all elements for consistent layout behavior */
         *, *::before, *::after {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--gray-light);
+            background-color: var(--cream);
             display: flex;
             min-height: 100vh;
         }
 
         .sidebar {
             width: 280px;
-            background-color: var(--purple-dark);
+            background-color: var(--red-dark);
             color: var(--white);
             padding: 30px;
             display: flex;
             flex-direction: column;
             position: fixed;
             height: 100%;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
 
         .sidebar h2 {
@@ -84,11 +86,12 @@ if (isset($_POST["insertBtn"])) {
             font-weight: 700;
             color: var(--cream);
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .sidebar a {
             display: block;
-            color: var(--cream);
+            color: var(--white);
             text-decoration: none;
             padding: 15px 20px;
             margin-bottom: 10px;
@@ -99,7 +102,7 @@ if (isset($_POST["insertBtn"])) {
 
         .sidebar a:hover,
         .sidebar a.active {
-            background-color: var(--purple-medium);
+            background-color: var(--red-medium);
             color: var(--white);
             transform: translateX(5px);
         }
@@ -111,15 +114,24 @@ if (isset($_POST["insertBtn"])) {
             border-top: 1px solid rgba(255,255,255,0.1);
         }
 
+        .logout a {
+            color: var(--white);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .logout a:hover {
+            color: var(--cream);
+        }
+
         .main {
             margin-left: 280px;
             padding: 40px;
-            width: 100%; /* Changed from calc to 100% to work better with flexbox */
-            flex-grow: 1; /* Allows the main content to take up remaining space */
+            width: calc(100% - 280px);
         }
 
         .main h1 {
-            color: var(--purple-dark);
+            color: var(--red-dark);
             margin-bottom: 25px;
             font-weight: 700;
         }
@@ -130,8 +142,8 @@ if (isset($_POST["insertBtn"])) {
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             max-width: 700px;
-            width: 100%; /* Ensures it fills parent on small screens */
-            margin: auto; /* Centers the form card */
+            width: 100%;
+            margin: auto;
         }
 
         .form-card label {
@@ -141,7 +153,6 @@ if (isset($_POST["insertBtn"])) {
         }
 
         .form-card input,
-        .form-card select,
         .form-card textarea {
             width: 100%;
             padding: 10px;
@@ -151,7 +162,7 @@ if (isset($_POST["insertBtn"])) {
         }
 
         .form-card button {
-            background-color: var(--purple-medium);
+            background-color: var(--red-medium);
             border: none;
             padding: 12px 20px;
             border-radius: 8px;
@@ -162,26 +173,25 @@ if (isset($_POST["insertBtn"])) {
         }
 
         .form-card button:hover {
-            background-color: var(--purple-light);
+            background-color: var(--red-dark);
         }
 
-        /* --- Responsive Styles --- */
         @media (max-width: 768px) {
             body {
-                flex-direction: column; /* Stacks sidebar and main content vertically */
+                flex-direction: column;
             }
 
             .sidebar {
-                position: static; /* Removes fixed position */
-                width: 100%; /* Allows sidebar to take full width */
+                position: static;
+                width: 100%;
                 height: auto;
-                padding-bottom: 15px; /* Adds space at the bottom */
+                padding-bottom: 15px;
             }
 
             .main {
-                margin-left: 0; /* Removes the margin */
-                width: 100%; /* Main content takes full width */
-                padding: 20px; /* Reduces padding for smaller screens */
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
             }
         }
     </style>
@@ -190,41 +200,39 @@ if (isset($_POST["insertBtn"])) {
 
     <div class="sidebar">
         <h2>Lunchbox Admin</h2>
-        <a href="dashboard.php">🍱 View Orders</a>
-        <a href="insertProduct.php" class="active">🥪 Manage Products</a>
-        <a href="viewUser.php">📋 View Users</a>
-        <a href="viewProduct.php">📈 Products Reports</a>
-        <a href="#">⚙️ Settings</a>
+    <a href="dashboard.php">📊 Dashboard</a>
+    <a href="insertProduct.php" class="active">🍱 Manage Lunchboxes</a>
+    <a href="viewUser.php">📋 View Users</a>
+    <a href="viewProduct.php" >📦 Lunchbox Reports</a>
+    <a href="#">⚙️ Settings</a>
+    <div class="logout">
+        <a href="../login.php">🚪 Logout</a>
+    </div>
+    </div>
 
-        <div class="logout">
-            <a href="../login.php">🚪 Logout</a>
+    <div class="main">
+        <h1>Insert Lunchbox</h1>
+        <div class="form-card">
+            <form action="insertProduct.php" method="post" enctype="multipart/form-data">
+                <label>Lunchbox Name</label>
+                <input type="text" name="pname" required>
+
+                <label>Price</label>
+                <input type="number" step="0.01" name="price" required>
+
+                <label>Quantity (Stock)</label>
+                <input type="number" name="qty" required>
+
+                <label>Description</label>
+                <textarea name="description" rows="4"></textarea>
+
+                <label>Lunchbox Image</label>
+                <input type="file" name="productImage" required>
+
+                <button type="submit" name="insertBtn">➕ Insert Lunchbox</button>
+            </form>
         </div>
     </div>
-
-   
-    <div class="main">
-    <h1>Insert Lunchbox</h1>
-    <div class="form-card">
-        <form action="insertProduct.php" method="post" enctype="multipart/form-data">
-            <label>Lunchbox Name</label>
-            <input type="text" name="pname" required>
-
-            <label>Price</label>
-            <input type="number" step="0.01" name="price" required>
-
-            <label>Quantity (Stock)</label>
-            <input type="number" name="qty" required>
-
-            <label>Description</label>
-            <textarea name="description" rows="4"></textarea>
-
-            <label>Lunchbox Image</label>
-            <input type="file" name="productImage" required>
-
-            <button type="submit" name="insertBtn">➕ Insert Lunchbox</button>
-        </form>
-    </div>
-</div>
 
 </body>
 </html>

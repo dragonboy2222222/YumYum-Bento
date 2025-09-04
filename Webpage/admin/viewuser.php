@@ -42,51 +42,55 @@ if (isset($_SESSION['message'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Users - Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
         :root {
-            --purple-dark: #4a284e;
-            --purple-medium: #6a3e6f;
-            --purple-light: #9e6fa0;
-            --cream: #f4f1e6;
+            --red-dark: #993333;
+            --red-medium: #cc3300;
+            --cream: #f8f4ec;
             --white: #ffffff;
-            --gray-dark: #333;
-            --gray-light: #f5f5f5;
+            --gray-dark: #333333;
+            --gray-light: #eeeeee;
         }
 
-        /* Best practice: Apply box-sizing to all elements for consistent layout behavior */
         *, *::before, *::after {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--gray-light);
+            background-color: var(--cream);
             display: flex;
             min-height: 100vh;
         }
 
         .sidebar {
             width: 280px;
-            background-color: var(--purple-dark);
+            background-color: var(--red-dark);
             color: var(--white);
             padding: 30px;
             position: fixed;
             height: 100%;
             display: flex;
             flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
 
         .sidebar h2 {
             text-align: center;
             margin-bottom: 40px;
             color: var(--cream);
+            text-transform: uppercase;
+            font-weight: 700;
         }
 
         .sidebar a {
             display: block;
-            color: var(--cream);
+            color: var(--white);
             text-decoration: none;
             padding: 15px 20px;
             margin-bottom: 10px;
@@ -97,7 +101,7 @@ if (isset($_SESSION['message'])) {
 
         .sidebar a:hover,
         .sidebar a.active {
-            background-color: var(--purple-medium);
+            background-color: var(--red-medium);
             transform: translateX(5px);
         }
 
@@ -108,16 +112,26 @@ if (isset($_SESSION['message'])) {
             text-align: center;
         }
 
+        .logout a {
+            color: var(--white);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .logout a:hover {
+            color: var(--cream);
+        }
+
         .main {
             margin-left: 280px;
             padding: 40px;
-            width: 100%; /* Changed to 100% for better responsiveness */
-            flex-grow: 1; /* Allows main content to fill remaining space */
+            width: calc(100% - 280px);
         }
 
         h1 {
-            color: var(--purple-dark);
+            color: var(--red-dark);
             margin-bottom: 25px;
+            font-weight: 700;
         }
 
         .message {
@@ -131,32 +145,32 @@ if (isset($_SESSION['message'])) {
         }
 
         .table-container {
-            overflow-x: auto; /* Allows horizontal scrolling for the table */
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             background-color: var(--white);
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
 
         th, td {
             padding: 15px 20px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--gray-light);
             text-align: left;
         }
 
         th {
-            background-color: var(--purple-light);
-            color: white;
-            white-space: nowrap; /* Prevents text from wrapping in headers */
+            background-color: var(--red-medium);
+            color: var(--white);
+            white-space: nowrap;
         }
 
         tr:hover {
-            background-color: #f1f1f1;
+            background-color: #f9f9f9;
         }
 
         .role-admin {
@@ -165,7 +179,7 @@ if (isset($_SESSION['message'])) {
         }
 
         .role-customer {
-            color: #333;
+            color: var(--gray-dark);
         }
 
         .role-form select {
@@ -173,52 +187,48 @@ if (isset($_SESSION['message'])) {
             border-radius: 6px;
             border: 1px solid #ccc;
             margin-right: 5px;
-            font-size: 14px; /* Adjust font size for better fit */
+            font-size: 14px;
         }
 
         .role-form button {
             padding: 6px 12px;
-            background: var(--purple-medium);
+            background: var(--red-medium);
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .role-form button:hover {
-            background: var(--purple-light);
+            background: var(--red-dark);
         }
 
-        /* --- Responsive Styles --- */
         @media (max-width: 768px) {
             body {
-                flex-direction: column; /* Stacks sidebar and main content vertically */
+                flex-direction: column;
             }
 
             .sidebar {
-                position: static; /* Removes fixed position */
+                position: static;
                 width: 100%;
                 height: auto;
                 padding-bottom: 15px;
             }
 
             .main {
-                margin-left: 0; /* Removes the margin */
+                margin-left: 0;
                 width: 100%;
                 padding: 20px;
             }
 
-            h1 {
-                font-size: 24px;
-            }
-
             th, td {
-                padding: 10px; /* Reduces table padding for smaller screens */
-                font-size: 14px; /* Makes text smaller to fit */
+                padding: 10px;
+                font-size: 14px;
             }
 
             .role-form button {
-                padding: 5px 10px; /* Reduces button padding */
+                padding: 5px 10px;
                 font-size: 12px;
             }
         }
@@ -227,13 +237,12 @@ if (isset($_SESSION['message'])) {
 <body>
 
 <div class="sidebar">
-    <h2>Lunchbox Admin</h2>
-    <a href="dashboard.php">🍱 View Orders</a>
-    <a href="insertproduct.php">🥪 Manage Products</a>
-    <a href="viewuser.php" class="active">📋 View Users</a>
-    <a href="viewProduct.php">📦 Products</a>
+      <h2>Lunchbox Admin</h2>
+    <a href="dashboard.php">📊 Dashboard</a>
+    <a href="insertProduct.php">🍱 Manage Lunchboxes</a>
+    <a href="viewUser.php" class="active">📋 View Users</a>
+    <a href="viewProduct.php" >📦 Lunchbox Reports</a>
     <a href="#">⚙️ Settings</a>
-
     <div class="logout">
         <a href="../login.php">🚪 Logout</a>
     </div>
