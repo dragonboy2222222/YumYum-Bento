@@ -44,7 +44,7 @@ if (isset($_SESSION['message'])) {
     <title>View Users - Admin Panel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --red-dark: #993333;
@@ -83,9 +83,10 @@ if (isset($_SESSION['message'])) {
         .sidebar h2 {
             text-align: center;
             margin-bottom: 40px;
+            font-weight: 700;
             color: var(--cream);
             text-transform: uppercase;
-            font-weight: 700;
+            letter-spacing: 1px; /* ✅ same as dashboard */
         }
 
         .sidebar a {
@@ -237,11 +238,11 @@ if (isset($_SESSION['message'])) {
 <body>
 
 <div class="sidebar">
-      <h2>Lunchbox Admin</h2>
+    <h2>Lunchbox Admin</h2>
     <a href="dashboard.php">📊 Dashboard</a>
     <a href="insertProduct.php">🍱 Manage Lunchboxes</a>
     <a href="viewUser.php" class="active">📋 View Users</a>
-    <a href="viewProduct.php" >📦 Lunchbox Reports</a>
+    <a href="viewProduct.php">📦 Lunchbox Reports</a>
     <a href="#">⚙️ Settings</a>
     <div class="logout">
         <a href="../login.php">🚪 Logout</a>
