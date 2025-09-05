@@ -72,7 +72,7 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
-      <img src="../productImage/loogo.png" alt="Logo" width="380" class="d-inline-block align-text-top">
+      <img src="../productImage/loogo.png" alt="Logo" width="300" class="d-inline-block align-text-top">
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
@@ -82,7 +82,22 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="collapse navbar-collapse" id="navbarMenu">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link active" href="home.php">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="products.php">Plans</a></li>
+        <li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" id="lunchboxDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Lunchboxes
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown">
+    <?php foreach ($lunchboxes as $lunchbox): ?>
+      <li>
+        <a class="dropdown-item" href="menus.php?lunchbox_id=<?= $lunchbox['id'] ?>">
+          <?= htmlspecialchars($lunchbox['name']) ?>
+        </a>
+      </li>
+    <?php endforeach; ?>
+  </ul>
+</li>
+
+
         <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Reviews</a></li>

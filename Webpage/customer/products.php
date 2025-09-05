@@ -43,7 +43,7 @@ $plans = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
   <div class="container-fluid">
     <a class="navbar-brand" href="home.php">
-      <img src="../productImage/loogo.png" alt="Logo" width="380" class="d-inline-block align-text-top">
+      <img src="../productImage/loogo.png" alt="Logo" width="300" class="d-inline-block align-text-top">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
       <span class="navbar-toggler-icon"></span>
@@ -55,7 +55,7 @@ $plans = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Reviews</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Cart</a></li>
+        <li class="nav-item"><a class="nav-link" href="cart.php">Cart</a></li>
       </ul>
     </div>
   </div>
@@ -85,7 +85,10 @@ $plans = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <p class="card-text"><?= htmlspecialchars($plan['description']) ?></p>
                   <p class="fw-bold">$<?= number_format($plan['price'], 2) ?></p>
                   <div class="mt-auto">
-                    <button class="btn btn-primary w-100">Subscribe</button>
+                    <!-- Fixed Subscribe Button -->
+                    <a href="cart.php?action=add&id=<?= $plan['id'] ?>" class="btn btn-primary w-100">
+                      Subscribe
+                    </a>
                   </div>
                 </div>
               </div>
