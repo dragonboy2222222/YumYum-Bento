@@ -98,9 +98,9 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </li>
 
 
-        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
+        <li class="nav-item"><a class="nav-link" href="aboutus.php">About Us</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Reviews</a></li>
+        <li class="nav-item"><a class="nav-link" href="">Profile</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Cart</a></li>
       </ul>
     </div>
@@ -243,6 +243,25 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chatbot Widget -->
+<button id="chat-toggle" class="btn btn-danger rounded-circle position-fixed" 
+        style="bottom:20px; right:20px; width:60px; height:60px; z-index:999;">
+  💬
+</button>
+
+<div id="chat-box" class="card shadow position-fixed d-none" 
+     style="bottom:90px; right:20px; width:300px; max-height:400px; z-index:999;">
+  <div class="card-header bg-danger text-white">Chat with us</div>
+  <div id="chat-messages" class="card-body overflow-auto" style="height:250px;"></div>
+  <form id="chat-form" class="card-footer d-flex">
+    <input type="text" id="chat-input" class="form-control me-2" placeholder="Type a message..." />
+    <button class="btn btn-danger" type="submit">Send</button>
+  </form>
+</div>
+
+<script src="../assets/chatbot.js"></script>
+
 
 </body>
 </html>
