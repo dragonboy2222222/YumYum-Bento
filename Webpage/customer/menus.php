@@ -132,20 +132,26 @@ if ($lunchboxId > 0) {
     <?php if (count($menus) > 0): ?>
       <?php foreach ($menus as $menu): ?>
         <div class="col-md-4">
-          <div class="card menu-card h-100 shadow-sm">
-            <?php if (!empty($menu['image'])): ?>
-              <img src="../uploads/<?= htmlspecialchars($menu['image']) ?>" 
-                   alt="<?= htmlspecialchars($menu['name']) ?>" 
-                   class="card-img-top">
-            <?php else: ?>
-              <img src="../productImage/placeholder.jpg" alt="No Image" class="card-img-top">
-            <?php endif; ?>
-            <div class="card-body">
-              <h5 class="card-title"><?= htmlspecialchars($menu['name']) ?></h5>
-              <p class="card-text text-muted"><?= htmlspecialchars($menu['description']) ?></p>
-            </div>
-          </div>
-        </div>
+  <div class="card menu-card h-100 shadow-sm">
+    <?php if (!empty($menu['image'])): ?>
+      <img src="../uploads/<?= htmlspecialchars($menu['image']) ?>" 
+           alt="<?= htmlspecialchars($menu['name']) ?>" 
+           class="card-img-top">
+    <?php else: ?>
+      <img src="../productImage/placeholder.jpg" alt="No Image" class="card-img-top">
+    <?php endif; ?>
+    <div class="card-body d-flex flex-column">
+      <h5 class="card-title"><?= htmlspecialchars($menu['name']) ?></h5>
+      <p class="card-text text-muted"><?= htmlspecialchars($menu['description']) ?></p>
+      <div class="mt-auto text-center">
+        <a href="lunchbox.php?id=<?= $menu['lunchbox_id'] ?>" class="btn btn-subscribe">
+          Subscribe
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
       <?php endforeach; ?>
     <?php else: ?>
       <p class="text-center">No menus found for this lunchbox.</p>

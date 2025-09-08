@@ -1,144 +1,75 @@
 <?php
 session_start();
-require_once "../dbconnect.php";
 
-// Initialize cart session
+// Initialize cart if not exists
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-// Handle cart actions
-if (isset($_GET['action'])) {
-    $action = $_GET['action'];
-
-    if ($action === "add" && isset($_GET['id'])) {
-        $id = intval($_GET['id']);
-
-        // Fetch product from DB
-        $stmt = $conn->prepare("SELECT * FROM lunchboxes WHERE id = :id LIMIT 1");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($product) {
-            // If product already in cart, increase quantity
-            if (isset($_SESSION['cart'][$id])) {
-                $_SESSION['cart'][$id]['quantity']++;
-            } else {
-                $_SESSION['cart'][$id] = [
-                    "id" => $product['id'],
-                    "name" => $product['name'],
-                    "price" => $product['price'],
-                    "quantity" => 1,
-                    "image" => $product['image']
-                ];
-            }
-        }
-    }
-
-    // Remove item
-    if ($action === "remove" && isset($_GET['id'])) {
-        $id = intval($_GET['id']);
-        unset($_SESSION['cart'][$id]);
-    }
-
-    // Clear cart
-    if ($action === "clear") {
-        $_SESSION['cart'] = [];
-    }
+// Handle adding item from lunchbox.php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $item = [
+        'lunchbox_id' => intval($_POST['lunchbox_id']),
+        'plan_id'     => intval($_POST['plan_id']),
+        'price'       => floatval($_POST['price']),
+        'image'       => $_POST['image']
+    ];
+    $_SESSION['cart'][] = $item;
 }
 
-$cart = $_SESSION['cart'];
+// Handle "Clear Cart"
+if (isset($_GET['clear'])) {
+    $_SESSION['cart'] = [];
+    header("Location: cart.php");
+    exit;
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Your Cart</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .navbar { background-color: #993333 !important; }
-    .navbar .nav-link, .navbar .navbar-brand { color: #fff !important; }
-    .navbar .nav-link:hover { color: #ffd9d9 !important; }
-    .btn-primary { background-color: #993333; border: none; }
-    .btn-primary:hover { background-color: #7a2727; }
-    footer { background-color: #993333 !important; color: #fff !important; }
-  </style>
 </head>
-<body>
+<body class="bg-light">
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-light shadow-sm">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="home.php">Lunchbox Co.</a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="home.php">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="bentoplans.php">Plans</a></li>
-        <li class="nav-item"><a class="nav-link active" href="cart.php">Cart</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+<div class="container py-5">
+  <h2 class="mb-4">🛒 Your Cart</h2>
 
-<!-- BODY -->
-<main class="container my-5">
-  <h1 class="mb-4">Your Cart</h1>
-
-  <?php if ($cart): ?>
-    <table class="table table-bordered text-center align-middle">
+  <?php if (!empty($_SESSION['cart'])): ?>
+    <table class="table table-bordered bg-white shadow-sm">
       <thead class="table-dark">
         <tr>
           <th>Image</th>
-          <th>Name</th>
+          <th>Lunchbox ID</th>
+          <th>Plan ID</th>
           <th>Price</th>
-          <th>Quantity</th>
-          <th>Total</th>
-          <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        <?php 
-        $grandTotal = 0;
-        foreach ($cart as $item): 
-          $total = $item['price'] * $item['quantity'];
-          $grandTotal += $total;
-        ?>
-        <tr>
-          <td><img src="<?= htmlspecialchars($item['image']) ?>" width="100" class="img-fluid"></td>
-          <td><?= htmlspecialchars($item['name']) ?></td>
-          <td>$<?= number_format($item['price'], 2) ?></td>
-          <td><?= $item['quantity'] ?></td>
-          <td>$<?= number_format($total, 2) ?></td>
-          <td>
-            <a href="cart.php?action=remove&id=<?= $item['id'] ?>" class="btn btn-danger btn-sm">Remove</a>
-          </td>
-        </tr>
+        <?php $total = 0; ?>
+        <?php foreach ($_SESSION['cart'] as $item): ?>
+          <tr>
+            <td><img src="<?= htmlspecialchars($item['image']) ?>" width="80"></td>
+            <td><?= $item['lunchbox_id'] ?></td>
+            <td><?= $item['plan_id'] ?></td>
+            <td>$<?= number_format($item['price'], 2) ?></td>
+          </tr>
+          <?php $total += $item['price']; ?>
         <?php endforeach; ?>
-        <tr>
-          <td colspan="4" class="text-end fw-bold">Grand Total</td>
-          <td colspan="2" class="fw-bold">$<?= number_format($grandTotal, 2) ?></td>
-        </tr>
       </tbody>
     </table>
-    <div class="d-flex justify-content-between">
-      <a href="bentoplans.php" class="btn btn-secondary">Continue Shopping</a>
-      <div>
-        <a href="cart.php?action=clear" class="btn btn-warning">Clear Cart</a>
-        <a href="#" class="btn btn-success">Checkout</a>
-      </div>
+
+    <h4 class="text-end">Total: <span class="text-success">$<?= number_format($total, 2) ?></span></h4>
+
+    <div class="d-flex justify-content-between mt-4">
+      <a href="cart.php?clear=1" class="btn btn-danger">Clear Cart</a>
+      <a href="pay.php" class="btn btn-success">Pay Now</a>
     </div>
   <?php else: ?>
-    <p class="text-center">Your cart is empty. <a href="bentoplans.php">Browse plans</a></p>
+    <p class="alert alert-info">Your cart is empty.</p>
   <?php endif; ?>
-</main>
+</div>
 
-<!-- FOOTER -->
-<footer class="text-center p-3 mt-5">
-  © 2025 Lunchbox Co. All rights reserved.
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
