@@ -1,5 +1,5 @@
 <?php
-require_once "../dbconnect.php";
+require_once "dbconnect.php";
 
 // Fetch all lunchboxes
 $stmt = $conn->prepare("SELECT * FROM lunchboxes ORDER BY id DESC");
@@ -88,7 +88,7 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown2">
     <?php foreach ($lunchboxes as $lunchbox): ?>
       <li>
-        <a class="dropdown-item" href="lunchbox.php?id=<?= $lunchbox['id'] ?>">
+        <a class="dropdown-item" href="customer/lunchbox.php?id=<?= $lunchbox['id'] ?>">
           <?= htmlspecialchars($lunchbox['name']) ?>
         </a>
       </li>
@@ -102,7 +102,7 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown">
     <?php foreach ($lunchboxes as $lunchbox): ?>
       <li>
-        <a class="dropdown-item" href="menus.php?lunchbox_id=<?= $lunchbox['id'] ?>">
+        <a class="dropdown-item" href="customer/menus.php?lunchbox_id=<?= $lunchbox['id'] ?>">
           <?= htmlspecialchars($lunchbox['name']) ?>
         </a>
       </li>
@@ -111,10 +111,10 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </li>
 
 
-        <li class="nav-item"><a class="nav-link" href="aboutus.php">About Us</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Reviews</a></li>
-        <li class="nav-item"><a class="nav-link" href="">Profile</a></li>
-        <li class="nav-item"><a class="nav-link" href="cart.php">Cart</a></li>
+        <li class="nav-item"><a class="nav-link" href="customer/aboutus.php">About Us</a></li>
+        <li class="nav-item"><a class="nav-link" href="customer/reviews.php">Reviews</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="customer/cart.php">Cart</a></li>
       </ul>
     </div>
   </div>

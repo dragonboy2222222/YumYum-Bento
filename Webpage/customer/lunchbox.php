@@ -2,6 +2,8 @@
 session_start();
 require_once "../dbconnect.php";
 
+
+
 // Check if lunchbox id is passed
 if (!isset($_GET['id'])) {
     die("❌ No lunchbox selected!");
@@ -100,18 +102,48 @@ $plans = $plansStmt->fetchAll(PDO::FETCH_ASSOC);
         <h4><?= htmlspecialchars($plan['name']) ?></h4>
         <p class="text-muted"><?= (int)$plan['duration_days'] ?> Days</p>
         <h5 class="fw-bold" style="color:#cc3300;">$<?= number_format($planPrice, 2) ?></h5>
-       <form action="cart.php" method="post">
-  <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
-  <input type="hidden" name="lunchbox_id" value="<?= $lunchbox['id'] ?>">
-  <input type="hidden" name="price" value="<?= $planPrice ?>">
-  <input type="hidden" name="image" value="<?= htmlspecialchars($lunchbox['image']) ?>">
-  <button type="submit" class="btn-subscribe">Subscribe</button>
-</form>
+      <?php if (!isset($_SESSION["username"])): ?>
+  <!-- If user is NOT logged in -->
+  <button type="button" class="btn-subscribe" data-bs-toggle="modal" data-bs-target="#loginModal">
+    Subscribe
+  </button>
+<?php else: ?>
+  <!-- If user IS logged in -->
+  <form action="cart.php" method="post">
+    <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
+    <input type="hidden" name="lunchbox_id" value="<?= $lunchbox['id'] ?>">
+    <input type="hidden" name="price" value="<?= $planPrice ?>">
+    <input type="hidden" name="image" value="<?= htmlspecialchars($lunchbox['image']) ?>">
+    <button type="submit" class="btn-subscribe">Subscribe</button>
+  </form>
+<?php endif; ?>
+
 
       </div>
     </div>
   <?php endforeach; ?>
 </div>
+
+<!-- Login Required Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        You need to login first before subscribing to a plan.
+      </div>
+      <div class="modal-footer">
+        <a href="../login.php" class="btn btn-primary">Go to Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
 </body>

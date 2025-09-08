@@ -1,6 +1,11 @@
 <?php
 require_once "../dbconnect.php";
 
+if (!isset($_SESSION["username"])) {
+    header("Location: ../login.php");
+    exit;
+}
+
 // Fetch all lunchboxes for navbar dropdown
 $stmt = $conn->prepare("SELECT * FROM lunchboxes ORDER BY id DESC");
 $stmt->execute();

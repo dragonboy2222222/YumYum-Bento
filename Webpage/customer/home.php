@@ -1,7 +1,37 @@
 <?php
+session_start();
 require_once "../dbconnect.php";
 
-// Fetch all lunchboxes
+// Check login
+if (!isset($_SESSION["username"])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+// Fetch user info
+$sql = "SELECT * FROM users WHERE username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->execute([$_SESSION["username"]]);
+$user = $stmt->fetch();
+
+if (!$user) {
+    die("User not found.");
+}
+
+$user_id = $user["id"];
+
+// Fetch profile info
+$stmt = $conn->prepare("SELECT * FROM profiles WHERE user_id = ?");
+$stmt->execute([$user_id]);
+$profile = $stmt->fetch();
+
+// Profile picture (default if none)
+$profilePic = "../productImage/default-avatar.png"; // put your default avatar here
+if ($profile && !empty($profile["profile_image"])) {
+    $profilePic = "../" . $profile["profile_image"];
+}
+
+// Fetch lunchboxes
 $stmt = $conn->prepare("SELECT * FROM lunchboxes ORDER BY id DESC");
 $stmt->execute();
 $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -14,65 +44,36 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lunchbox Subscription</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .navbar {
+      background-color: #993333 !important;
+    }
+    .navbar .nav-link,
+    .navbar .navbar-brand {
+      color: #fff !important;
+    }
+    .navbar .nav-link:hover {
+      color: #ffd9d9 !important;
+    }
+    .profile-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<style>
-  /* Set Poppins as the default font for the body and headings */
-  body {
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  h1, h2, h3, h4, h5, h6, .navbar-brand {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-  }
-  
-  /* Navbar */
-  .navbar {
-    background-color: #993333 !important;
-  }
-  .navbar .nav-link,
-  .navbar .navbar-brand {
-    color: #fff !important;
-  }
-  .navbar .nav-link:hover {
-    color: #ffd9d9 !important; /* lighter red hover */
-  }
-
-  /* Subscribe button */
-  .btn-subscribe,
-  .btn-primary {
-    background-color: #993333;
-    border: none;
-  }
-  .btn-subscribe:hover,
-  .btn-primary:hover {
-    background-color: #993333; /* slightly darker */
-  }
-
-  /* Footer */
-  footer {
-    background-color: #993333 !important;
-    color: #fff !important;
-  }
-  footer a {
-    color: #730909ff !important;
-    text-decoration: none;
-  }
-  footer a:hover {
-    text-decoration: underline;
-  }
-</style>
-
-
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img src="../productImage/loogo.png" alt="Logo" width="300" class="d-inline-block align-text-top">
+    <a class="navbar-brand" href="home.php">
+      <img src="../productImage/loogo.png" alt="Logo" width="180" class="d-inline-block align-text-top">
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
@@ -82,43 +83,52 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="collapse navbar-collapse" id="navbarMenu">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle active" href="#" id="lunchboxDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    LunchBoxes
-  </a>
-  <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown2">
-    <?php foreach ($lunchboxes as $lunchbox): ?>
-      <li>
-        <a class="dropdown-item" href="lunchbox.php?id=<?= $lunchbox['id'] ?>">
-          <?= htmlspecialchars($lunchbox['name']) ?>
-        </a>
-      </li>
-    <?php endforeach; ?>
-  </ul>
-</li>
-        <li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" href="#" id="lunchboxDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Menus
-  </a>
-  <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown">
-    <?php foreach ($lunchboxes as $lunchbox): ?>
-      <li>
-        <a class="dropdown-item" href="menus.php?lunchbox_id=<?= $lunchbox['id'] ?>">
-          <?= htmlspecialchars($lunchbox['name']) ?>
-        </a>
-      </li>
-    <?php endforeach; ?>
-  </ul>
-</li>
+          <a class="nav-link dropdown-toggle active" href="#" id="lunchboxDropdown2" role="button" data-bs-toggle="dropdown">
+            LunchBoxes
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown2">
+            <?php foreach ($lunchboxes as $lunchbox): ?>
+              <li>
+                <a class="dropdown-item" href="lunchbox.php?id=<?= $lunchbox['id'] ?>">
+                  <?= htmlspecialchars($lunchbox['name']) ?>
+                </a>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </li>
 
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="lunchboxDropdown" role="button" data-bs-toggle="dropdown">
+            Menus
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown">
+            <?php foreach ($lunchboxes as $lunchbox): ?>
+              <li>
+                <a class="dropdown-item" href="menus.php?lunchbox_id=<?= $lunchbox['id'] ?>">
+                  <?= htmlspecialchars($lunchbox['name']) ?>
+                </a>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </li>
 
         <li class="nav-item"><a class="nav-link" href="aboutus.php">About Us</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Reviews</a></li>
-        <li class="nav-item"><a class="nav-link" href="">Profile</a></li>
         <li class="nav-item"><a class="nav-link" href="cart.php">Cart</a></li>
+
+        <!-- Profile Picture -->
+        <li class="nav-item ms-3">
+          <a href="profile.php">
+            <img src="<?= htmlspecialchars($profilePic) ?>" alt="Profile" class="profile-img">
+          </a>
+        </li>
       </ul>
     </div>
   </div>
 </nav>
+
+
+
 
 <main class="container-fluid px-0">
 
