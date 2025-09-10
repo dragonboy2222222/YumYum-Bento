@@ -1,10 +1,9 @@
 <?php
+session_start();
 require_once "../dbconnect.php";
 
-if (!isset($_SESSION["username"])) {
-    header("Location: ../login.php");
-    exit;
-}
+// login is optional here
+$loggedIn = isset($_SESSION["username"]);
 
 // Fetch all lunchboxes for navbar dropdown
 $stmt = $conn->prepare("SELECT * FROM lunchboxes ORDER BY id DESC");

@@ -2,18 +2,15 @@
 session_start();
 require_once "../dbconnect.php";
 
+// login is optional here
+$loggedIn = isset($_SESSION["username"]);
 
-
-// Check if lunchbox id is passed
-if (!isset($_GET['id'])) {
-    die("❌ No lunchbox selected!");
-}
-
-$id = intval($_GET['id']);
+// Check if lunchbox id is passed, otherwise use Classic Bento by default
+$lunchbox_id = isset($_GET['id']) ? intval($_GET['id']) : 4; // 1 is Classic Bento's default ID
 
 // Fetch lunchbox details
 $stmt = $conn->prepare("SELECT * FROM lunchboxes WHERE id = ?");
-$stmt->execute([$id]);
+$stmt->execute([$lunchbox_id]);
 $lunchbox = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$lunchbox) {

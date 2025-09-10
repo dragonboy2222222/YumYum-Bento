@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once("dbconnect.php");
 
 $message = "";
@@ -7,19 +8,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST["username"]);
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
-  
 
     // Hash password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insert into DB
     try {
+        // Insert into DB
         $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$username, $email, $hashedPassword]);
-        $message = "✅ User registered successfully!";
+
+        // ✅ Fetch the new user's ID
+        $user_id = $conn->lastInsertId();
+
+        // ✅ Auto login (set session variables)
+        $_SESSION["user_id"] = $user_id;
+        $_SESSION["username"] = $username;
+        $_SESSION["role"] = "customer"; // default role (adjust if needed)
+
+        // ✅ Redirect to profile page
+        header("Location: customer/profile.php");
+        exit;
+
     } catch (PDOException $e) {
-        $message = " Registration failed: " . $e->getMessage();
+        $message = "Registration failed: " . $e->getMessage();
     }
 }
 ?>
@@ -118,7 +130,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <label>Password:</label>
             <input type="password" name="password" required>
-
 
             <button type="submit">Register</button>
         </form>

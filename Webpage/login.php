@@ -1,6 +1,17 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
-require_once("dbconnect.php");
+require_once("dbconnect.php"); 
+
+require '../PHPMailer-master/src/PHPMailer.php';
+require '../PHPMailer-master/src/SMTP.php';
+require '../PHPMailer-master/src/Exception.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 $error = "";
 
@@ -15,111 +26,136 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user["password"])) {
-        $_SESSION["username"] = $user["username"];
-        $_SESSION["role"] = $user["role"];
+        // Generate OTP
+        $otp = rand(100000, 999999);
 
-        if ($user["role"] === "admin") {
-            header("Location: admin/dashboard.php");
-        } else {
-            header("Location: customer/home.php");
+        // Save pending login info in session
+        $_SESSION["pending_user"] = [
+            "id" => $user['id'],
+            "username" => $user["username"],
+            "role" => $user["role"],
+            "otp" => $otp,
+            "otp_expires" => time() + 300
+        ];
+
+        // Send OTP via PHPMailer
+        $mail = new PHPMailer(true);
+        try {
+            $mail->SMTPDebug = 0; 
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'theinpainghtun@gmail.com'; 
+            $mail->Password   = 'lhks bkwk rbts pcyl'; // App password
+            $mail->SMTPSecure = 'tls';
+            $mail->Port       = 587;
+
+            $mail->setFrom('theinpainghtun@gmail.com', 'Secure Login');
+            $mail->addAddress($user["email"], $user["username"]);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Your Login Verification Code';
+            $mail->Body    = "Hello <b>{$user['username']}</b>,<br><br>Your verification code is <b>$otp</b>.<br><br>This code expires in 5 minutes.";
+
+            $mail->send();
+
+            header("Location: verify.php");
+            exit;
+
+        } catch (Exception $e) {
+            $error = "Mailer Error: {$mail->ErrorInfo}";
         }
-        exit;
     } else {
         $error = "Invalid username or password.";
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Login</title>
     <style>
         body {
-            background-color: #f0f2f5;
+            background: linear-gradient(135deg, #4B0082, #6a0dad);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
+            margin: 0;
         }
-
         .login-box {
-            background-color: white;
+            background: #fff;
             padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
             width: 350px;
-        }
-
-        h2 {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
             text-align: center;
-            color: #333;
-            margin-bottom: 20px;
         }
-
-        label {
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .login-box label {
             display: block;
-            margin-bottom: 5px;
+            text-align: left;
+            margin: 10px 0 5px;
+            font-size: 14px;
             color: #555;
         }
-
-        input[type="text"], input[type="password"] {
+        .login-box input[type="text"],
+        .login-box input[type="password"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             margin-bottom: 15px;
             font-size: 14px;
+            box-sizing: border-box;
         }
-
-        button {
+        .login-box button {
             width: 100%;
             background-color: #4B0082;
-            color: white;
+            color: #fff;
             border: none;
             padding: 12px;
             font-size: 16px;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: 0.3s;
         }
-
-        button:hover {
+        .login-box button:hover {
             background-color: #5e2d91;
         }
-
         .error {
             color: red;
-            text-align: center;
             margin-bottom: 15px;
+            font-size: 14px;
         }
-
         .register-link {
-            text-align: center;
             margin-top: 15px;
             font-size: 14px;
         }
-
         .register-link a {
             color: #4B0082;
             text-decoration: none;
+            font-weight: bold;
         }
-
         .register-link a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-
     <div class="login-box">
         <h2>User Login</h2>
 
-        <?php if ($error): ?>
-            <div class="error"><?php echo $error; ?></div>
+        <?php if($error): ?>
+            <div class="error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <form method="post" action="">
+        <form method="post">
             <label>Username:</label>
             <input type="text" name="username" required>
 
@@ -130,9 +166,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
         <div class="register-link">
-            Don't have an account? <a href="register.php">Register here</a>
+            Don’t have an account? <a href="register.php">Register here</a>
         </div>
     </div>
-
 </body>
 </html>

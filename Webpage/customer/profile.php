@@ -60,7 +60,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute([$user_id, $full_name, $phone, $address, $profile_image]);
     }
 
-    header("Location: profile.php");
+    // ✅ After creation, redirect to home.php
+    header("Location: home.php");
     exit;
 }
 
@@ -82,21 +83,7 @@ $profile = $stmt->fetch();
     <div class="card shadow p-4">
         <h2 class="mb-4 text-center text-primary">My Profile</h2>
 
-        <?php if ($profile): ?>
-            <!-- Show profile details -->
-            <div class="text-center">
-                <?php if ($profile["profile_image"]): ?>
-                    <img src="../<?php echo htmlspecialchars($profile["profile_image"]); ?>" 
-                         alt="Profile" class="rounded-circle mb-3" width="120" height="120">
-                <?php else: ?>
-                    <img src="https://via.placeholder.com/120" class="rounded-circle mb-3">
-                <?php endif; ?>
-                <h4><?php echo htmlspecialchars($profile["full_name"]); ?></h4>
-                <p><strong>Phone:</strong> <?php echo htmlspecialchars($profile["phone"]); ?></p>
-                <p><strong>Address:</strong> <?php echo htmlspecialchars($profile["address"]); ?></p>
-                <a href="profile.php?edit=1" class="btn btn-warning">Edit Profile</a>
-            </div>
-        <?php else: ?>
+        <?php if (!$profile): ?>
             <!-- Create Profile Form -->
             <form method="post" enctype="multipart/form-data">
                 <div class="mb-3">
@@ -121,6 +108,19 @@ $profile = $stmt->fetch();
 
                 <button type="submit" class="btn btn-primary">Create Profile</button>
             </form>
+        <?php else: ?>
+            <div class="text-center">
+                <?php if ($profile["profile_image"]): ?>
+                    <img src="../<?php echo htmlspecialchars($profile["profile_image"]); ?>" 
+                         alt="Profile" class="rounded-circle mb-3" width="120" height="120">
+                <?php else: ?>
+                    <img src="https://via.placeholder.com/120" class="rounded-circle mb-3">
+                <?php endif; ?>
+                <h4><?php echo htmlspecialchars($profile["full_name"]); ?></h4>
+                <p><strong>Phone:</strong> <?php echo htmlspecialchars($profile["phone"]); ?></p>
+                <p><strong>Address:</strong> <?php echo htmlspecialchars($profile["address"]); ?></p>
+                <a href="editprofile.php" class="btn btn-warning">Edit Profile</a>
+            </div>
         <?php endif; ?>
     </div>
 </div>

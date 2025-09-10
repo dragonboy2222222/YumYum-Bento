@@ -248,11 +248,13 @@ if (isset($_SESSION['message'])) {
 
     <div class="sidebar">
         <h2>Lunchbox Admin</h2>
-        <a href="dashboard.php">📊 Dashboard</a>
-        <a href="insertProduct.php">🍱 Manage Lunchboxes</a>
-        <a href="viewUser.php">📋 View Users</a>
-        <a href="viewProduct.php" class="active">📦 Lunchbox Reports</a>
-        <a href="#">⚙️ Settings</a>
+    <a href="dashboard.php">📊 Dashboard</a>
+    <a href="insertProduct.php">🍱 Manage Lunchboxes</a>
+    <a href="viewUser.php">👥 View Users</a>
+    <a href="viewProduct.php" class="active">📦 Lunchbox Reports</a>
+    <a href="insertmenu.php">🧾 Insert Menus</a>
+    <a href="viewmenu.php">📖 View Menus</a>
+    <a href="insertPlans.php">📅 Insert Plans</a>
         <div class="logout">
             <a href="../login.php">🚪 Logout</a>
         </div>

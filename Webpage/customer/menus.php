@@ -1,5 +1,10 @@
 <?php
+session_start();
 require_once "../dbconnect.php";
+
+
+// login is optional here
+$loggedIn = isset($_SESSION["username"]);
 
 // Fetch all lunchboxes for navbar dropdown
 $stmt = $conn->prepare("SELECT * FROM lunchboxes ORDER BY id DESC");
@@ -92,7 +97,7 @@ if ($lunchboxId > 0) {
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="<?php echo isset($_SESSION['username']) ? 'home.php' : 'index.php'; ?>"></a>
       <img src="../productImage/loogo.png" alt="Logo" width="300" class="d-inline-block align-text-top">
     </a>
 
@@ -102,7 +107,11 @@ if ($lunchboxId > 0) {
 
     <div class="collapse navbar-collapse" id="navbarMenu">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link active" href="home.php">Home</a></li>
+       <li class="nav-item">
+  <a class="nav-link active" href="<?php echo isset($_SESSION['username']) ? 'home.php' : '../index.php'; ?>">
+    Home
+  </a>
+</li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="lunchboxDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Lunchboxes

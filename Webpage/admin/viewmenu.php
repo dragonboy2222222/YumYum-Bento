@@ -44,8 +44,11 @@ if (isset($_SESSION['message'])) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>View Menus | Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+    /* Define new color variables based on the previous design */
     :root {
         --red-dark: #993333;
         --red-medium: #cc3300;
@@ -54,12 +57,20 @@ if (isset($_SESSION['message'])) {
         --gray-dark: #333333;
         --gray-light: #eeeeee;
     }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
     body {
         font-family: 'Poppins', sans-serif;
         background-color: var(--cream);
         display: flex;
         min-height: 100vh;
     }
+
     .sidebar {
         width: 280px;
         background-color: var(--red-dark);
@@ -69,54 +80,171 @@ if (isset($_SESSION['message'])) {
         flex-direction: column;
         position: fixed;
         height: 100%;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
     }
-    .sidebar h2 { text-align: center; margin-bottom: 40px; color: var(--cream); }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        font-weight: 700;
+        color: var(--cream);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
     .sidebar a {
-        display: block; color: var(--white); text-decoration: none;
-        padding: 15px 20px; margin-bottom: 10px; border-radius: 8px;
-        transition: 0.3s; font-weight: 600;
+        display: block;
+        color: var(--white);
+        text-decoration: none;
+        padding: 15px 20px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 600;
     }
-    .sidebar a:hover, .sidebar a.active { background-color: var(--red-medium); transform: translateX(5px); }
-    .logout { margin-top: auto; text-align: center; }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+        background-color: var(--red-medium);
+        color: var(--white);
+        transform: translateX(5px);
+    }
+    
+    .logout {
+        margin-top: auto;
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logout a {
+        color: var(--white);
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .logout a:hover {
+        color: var(--cream);
+    }
+
     .main {
-        margin-left: 280px; padding: 40px; width: calc(100% - 280px);
+        margin-left: 280px;
+        padding: 40px;
+        width: calc(100% - 280px);
     }
-    .main h1 { color: var(--red-dark); margin-bottom: 20px; }
+
+    .main h1 {
+        color: var(--red-dark);
+        margin-bottom: 25px;
+        font-weight: 700;
+    }
+
     .message {
-        padding: 12px; background-color: #d4edda; color: #155724;
-        border-radius: 8px; margin-bottom: 15px; font-weight: 600;
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-align: center;
     }
+
     .search-bar {
         margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
+
     .search-bar input[type="text"] {
-        padding: 10px; width: 250px; border: 1px solid #ccc;
-        border-radius: 6px; font-size: 0.95rem;
+        padding: 10px 15px;
+        border: 1px solid var(--gray-light);
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        width: 300px;
+        transition: border-color 0.3s ease;
     }
+
+    .search-bar input[type="text"]:focus {
+        outline: none;
+        border-color: var(--red-medium);
+    }
+    
     .search-bar button {
-        padding: 10px 15px; background: var(--red-medium); color: #fff;
-        border: none; border-radius: 6px; cursor: pointer;
-        font-weight: 600; margin-left: 5px;
+        padding: 10px 20px;
+        background-color: var(--red-medium);
+        color: var(--white);
+        border: none;
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
-    .search-bar button:hover { background: var(--red-dark); }
+
+    .search-bar button:hover {
+        background-color: var(--red-dark);
+    }
+
     table {
-        width: 100%; border-collapse: collapse; background: var(--white);
-        border-radius: 8px; overflow: hidden;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        width: 100%;
+        border-collapse: collapse;
+        background-color: var(--white);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
+
     th, td {
-        padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left;
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid var(--gray-light);
     }
-    th { background-color: var(--red-medium); color: var(--white); }
-    tr:hover { background-color: #f9f9f9; }
+
+    thead th {
+        background-color: var(--red-dark);
+        color: var(--white);
+        font-weight: 600;
+    }
+
+    tbody tr:hover {
+        background-color: var(--cream);
+    }
+    
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+
     .actions a {
-        padding: 6px 10px; border-radius: 6px; text-decoration: none;
-        font-weight: 600; font-size: 0.9rem; margin-right: 5px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9em;
+        transition: background-color 0.3s ease;
     }
-    .edit { background: var(--red-medium); color: #fff; }
-    .edit:hover { background: var(--red-dark); }
-    .delete { background: #f44336; color: #fff; }
-    .delete:hover { background: #d32f2f; }
+
+    .actions a.edit {
+        background-color: var(--red-medium);
+        color: var(--white);
+    }
+
+    .actions a.edit:hover {
+        background-color: #e65c00;
+    }
+    
+    .actions a.delete {
+        background-color: #ff4d4d;
+        color: var(--white);
+    }
+
+    .actions a.delete:hover {
+        background-color: #ff1a1a;
+    }
+
 </style>
 </head>
 <body>
@@ -125,10 +253,11 @@ if (isset($_SESSION['message'])) {
     <h2>Lunchbox Admin</h2>
     <a href="dashboard.php">📊 Dashboard</a>
     <a href="insertProduct.php">🍱 Manage Lunchboxes</a>
-    <a href="viewmenu.php" class="active">📋 View Menus</a>
     <a href="viewUser.php">👥 View Users</a>
     <a href="viewProduct.php">📦 Lunchbox Reports</a>
-    <a href="#">⚙️ Settings</a>
+    <a href="insertmenu.php">🧾 Insert Menus</a>
+    <a href="viewmenu.php" class="active">📖 View Menus</a>
+    <a href="insertPlans.php">📅 Insert Plans</a>
     <div class="logout">
         <a href="../login.php">🚪 Logout</a>
     </div>

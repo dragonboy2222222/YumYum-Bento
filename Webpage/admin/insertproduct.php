@@ -204,7 +204,9 @@ if (isset($_POST["insertBtn"])) {
     <a href="insertProduct.php" class="active">🍱 Manage Lunchboxes</a>
     <a href="viewUser.php">📋 View Users</a>
     <a href="viewProduct.php" >📦 Lunchbox Reports</a>
-    <a href="#">⚙️ Settings</a>
+     <a href="insertmenu.php">🧾 Insert Menus</a>
+    <a href="viewmenu.php">📖 View Menus</a>
+    <a href="insertPlans.php">📅 Insert Plans</a>
     <div class="logout">
         <a href="../login.php">🚪 Logout</a>
     </div>

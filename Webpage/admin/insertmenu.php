@@ -45,160 +45,167 @@ if (isset($_POST["insertBtn"])) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --red-dark: #993333;
-            --red-medium: #cc3300;
-            --cream: #f8f4ec;
-            --white: #ffffff;
-            --gray-dark: #333333;
-            --gray-light: #eeeeee;
-        }
+      /* Define new color variables based on the previous design */
+:root {
+    --red-dark: #993333;
+    --red-medium: #cc3300;
+    --cream: #f8f4ec;
+    --white: #ffffff;
+    --gray-dark: #333333;
+    --gray-light: #eeeeee;
+}
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--cream);
-            display: flex;
-            min-height: 100vh;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        .sidebar {
-            width: 280px;
-            background-color: var(--red-dark);
-            color: var(--white);
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100%;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--cream);
+    display: flex;
+    min-height: 100vh;
+}
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            font-weight: 700;
-            color: var(--cream);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+.sidebar {
+    width: 280px;
+    background-color: var(--red-dark);
+    color: var(--white);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100%;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
 
-        .sidebar a {
-            display: block;
-            color: var(--white);
-            text-decoration: none;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 700;
+    color: var(--cream);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background-color: var(--red-medium);
-            color: var(--white);
-            transform: translateX(5px);
-        }
+.sidebar a {
+    display: block;
+    color: var(--white);
+    text-decoration: none;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
 
-        .logout {
-            margin-top: auto;
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: var(--red-medium);
+    color: var(--white);
+    transform: translateX(5px);
+}
 
-        .logout a {
-            color: var(--white);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+.logout {
+    margin-top: auto;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
 
-        .logout a:hover {
-            color: var(--cream);
-        }
+.logout a {
+    color: var(--white);
+    font-weight: 600;
+    text-transform: uppercase;
+}
 
-        .main {
-            margin-left: 280px;
-            padding: 40px;
-            width: calc(100% - 280px);
-        }
+.logout a:hover {
+    color: var(--cream);
+}
 
-        .main h1 {
-            color: var(--red-dark);
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
+.main {
+    margin-left: 280px;
+    padding: 40px;
+    width: calc(100% - 280px);
+}
 
-        .form-card {
-            background: var(--white);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            max-width: 700px;
-            width: 100%;
-            margin: auto;
-        }
+.main h1 {
+    color: var(--red-dark);
+    margin-bottom: 25px;
+    font-weight: 700;
+}
 
-        .form-card label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
-        }
+.form-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    max-width: 700px;
+    width: 100%;
+    margin: auto;
+}
 
-        .form-card input,
-        .form-card textarea,
-        .form-card select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 18px;
-            border-radius: 8px;
-            border: 1px solid var(--gray-light);
-        }
+.form-card label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+}
 
-        .form-card button {
-            background-color: var(--red-medium);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            color: var(--white);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+.form-card input,
+.form-card textarea,
+.form-card select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-light);
+}
 
-        .form-card button:hover {
-            background-color: var(--red-dark);
-        }
+.form-card button {
+    background-color: var(--red-medium);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: var(--white);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            .sidebar {
-                position: static;
-                width: 100%;
-                height: auto;
-                padding-bottom: 15px;
-            }
-            .main {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px;
-            }
-        }
+.form-card button:hover {
+    background-color: var(--red-dark);
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding-bottom: 15px;
+    }
+    .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+}
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <h2>Lunchbox Admin</h2>
-        <a href="dashboard.php">📊 Dashboard</a>
-        <a href="insertProduct.php">🍱 Manage Lunchboxes</a>
-        <a href="insertMenu.php" class="active">🥗 Manage Menus</a>
-        <a href="viewUser.php">📋 View Users</a>
-        <a href="viewProduct.php">📦 Lunchbox Reports</a>
-        <a href="viewMenu.php">📖 Menu Reports</a>
-        <a href="#">⚙️ Settings</a>
+    <a href="dashboard.php" >📊 Dashboard</a>
+    <a href="insertProduct.php" >🍱 Manage Lunchboxes</a>
+    <a href="viewUser.php">📋 View Users</a>
+    <a href="viewProduct.php" >📦 Lunchbox Reports</a>
+    <a href="insertmenu.php" class="active">🧾 Insert Menus</a>
+    <a href="viewmenu.php">📖 View Menus</a>
+    <a href="insertPlans.php">📅 Insert Plans</a>
         <div class="logout">
             <a href="../login.php">🚪 Logout</a>
         </div>

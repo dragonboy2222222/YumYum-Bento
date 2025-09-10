@@ -2,40 +2,47 @@
 session_start();
 require_once "../dbconnect.php";
 
-// Check login
+// ✅ Check if user is logged in
 if (!isset($_SESSION["username"])) {
     header("Location: ../login.php");
     exit;
 }
 
-// Fetch user info
-$sql = "SELECT * FROM users WHERE username = ?";
-$stmt = $conn->prepare($sql);
-$stmt->execute([$_SESSION["username"]]);
-$user = $stmt->fetch();
+// ✅ Get username from session
+$username = $_SESSION["username"];
 
+// ✅ Fetch full user details from database
+$stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+$stmt->execute([$username]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// ✅ If user not found, force logout
 if (!$user) {
-    die("User not found.");
+    session_destroy();
+    header("Location: ../login.php");
+    exit;
 }
 
 $user_id = $user["id"];
+$role = $user["role"];
 
-// Fetch profile info
+// ✅ Fetch profile info
 $stmt = $conn->prepare("SELECT * FROM profiles WHERE user_id = ?");
 $stmt->execute([$user_id]);
-$profile = $stmt->fetch();
+$profile = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Profile picture (default if none)
-$profilePic = "../productImage/default-avatar.png"; // put your default avatar here
+// ✅ Profile picture (default if none)
+$profilePic = "../productImage/default-avatar.png";
 if ($profile && !empty($profile["profile_image"])) {
     $profilePic = "../" . $profile["profile_image"];
 }
 
-// Fetch lunchboxes
+// ✅ Fetch lunchboxes
 $stmt = $conn->prepare("SELECT * FROM lunchboxes ORDER BY id DESC");
 $stmt->execute();
 $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -66,6 +73,44 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
       object-fit: cover;
       cursor: pointer;
     }
+
+    .image-container {
+    height: 500px; /* Or any desired fixed height for the image section */
+    overflow: hidden; /* Hide any overflow if the image is larger than the container */
+  }
+
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container while maintaining aspect ratio */
+  }
+
+  /* You might also want to adjust this for smaller screens */
+  @media (max-width: 768px) {
+    .image-container {
+      height: 300px; /* Adjust height for smaller screens */
+    }
+  }
+
+  .brand-text {
+    font-size: 1.5rem; /* Larger font size for prominence */
+    font-weight: 700; /* Bold text */
+    color: #fff; /* White text color to stand out on the dark background */
+    margin: 0; /* Remove default paragraph margin */
+    padding: 0.5rem; /* Add some padding for spacing */
+  }
+
+  /* Adjust font size for smaller screens to prevent overflow */
+  @media (max-width: 768px) {
+    .brand-text {
+      font-size: 1rem;
+    }
+  }
+
+  /* Ensure text is centered within the columns on all screen sizes */
+  .col-6, .col-md-3 {
+    text-align: center;
+  }
   </style>
 </head>
 <body>
@@ -73,7 +118,7 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
   <div class="container-fluid">
     <a class="navbar-brand" href="home.php">
-      <img src="../productImage/loogo.png" alt="Logo" width="180" class="d-inline-block align-text-top">
+      <img src="../productImage/loogo.png" alt="Logo" width="280" class="d-inline-block align-text-top">
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
@@ -122,6 +167,11 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <img src="<?= htmlspecialchars($profilePic) ?>" alt="Profile" class="profile-img">
           </a>
         </li>
+
+        <!-- Logout Button -->
+<li class="nav-item ms-3">
+  <a href="../logout.php" class="btn btn-outline-light">Logout</a>
+</li>
       </ul>
     </div>
   </div>
@@ -132,9 +182,8 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <main class="container-fluid px-0">
 
-  <section class="row align-items-center g-0" style="background-color:#f8f4ec;">
-    <div class="col-md-6">
-      <img src="../productImage/yourteam.jpg" alt="Our Team" class="img-fluid w-100 h-100 object-fit-cover">
+ <section class="row align-items-center g-0" style="background-color:#f8f4ec;">
+    <div class="col-md-6 image-container"> <img src="../productImage/team.png" alt="Our Team" class="img-fluid object-fit-cover">
     </div>
     <div class="col-md-6 p-5 d-flex flex-column justify-content-center">
       <h6 class="text-uppercase fw-bold mb-3" style="color:#993333;">What Makes Us Different</h6>
@@ -143,43 +192,43 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         With a Lunchbox subscription, enjoy delicious meals while supporting small 
         family-run businesses and preserving culinary traditions.
       </p>
-      <a href="bentoplans.php" class="btn btn-primary btn-lg" style="background-color:#cc3300; border:none;">
+      <a href="lunchbox.php" class="btn btn-primary btn-lg" style="background-color:#cc3300; border:none;">
         Subscribe Now
       </a>
     </div>
   </section>
 
-  <section class="py-5" style="background-color:#5a1f1f; color:#fff;">
-    <div class="container text-center">
-      <h6 class="mb-4 text-uppercase">Featured By</h6>
-      <div class="row justify-content-center align-items-center g-4">
-        <div class="col-6 col-md-3">
-          <img src="../productImage/bonappetit.png" alt="Bon Appetit" class="img-fluid">
-        </div>
-        <div class="col-6 col-md-3">
-          <img src="../productImage/nytimes.png" alt="NY Times" class="img-fluid">
-        </div>
-        <div class="col-6 col-md-3">
-          <img src="../productImage/forbes.png" alt="Forbes" class="img-fluid">
-        </div>
-        <div class="col-6 col-md-3">
-          <img src="../productImage/today.png" alt="Today Show" class="img-fluid">
-        </div>
-        <div class="col-6 col-md-3">
-          <img src="../productImage/strategist.png" alt="Strategist" class="img-fluid">
-        </div>
-        <div class="col-6 col-md-3">
-          <img src="../productImage/byrdie.png" alt="Byrdie" class="img-fluid">
-        </div>
-        <div class="col-6 col-md-3">
-          <img src="../productImage/techcrunch.png" alt="TechCrunch" class="img-fluid">
-        </div>
-        <div class="col-6 col-md-3">
-          <img src="../productImage/fastcompany.png" alt="Fast Company" class="img-fluid">
-        </div>
+ <section class="py-5" style="background-color:#5a1f1f; color:#fff;">
+  <div class="container text-center">
+    <h6 class="mb-4 text-uppercase">Featured By</h6>
+    <div class="row justify-content-center align-items-center g-4">
+      <div class="col-6 col-md-3">
+        <p class="brand-text">Bon Appetit</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="brand-text">NY Times</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="brand-text">Forbes</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="brand-text">Today Show</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="brand-text">Strategist</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="brand-text">Byrdie</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="brand-text">TechCrunch</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <p class="brand-text">Fast Company</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <section class="container py-5">
   <h2 class="text-center mb-5">How it works</h2>

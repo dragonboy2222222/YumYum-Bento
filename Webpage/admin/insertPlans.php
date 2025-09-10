@@ -41,6 +41,7 @@ $plans = $conn->query("SELECT * FROM plans ORDER BY id DESC")->fetchAll(PDO::FET
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Define new color variables based on the previous design */
         :root {
             --red-dark: #993333;
             --red-medium: #cc3300;
@@ -48,6 +49,12 @@ $plans = $conn->query("SELECT * FROM plans ORDER BY id DESC")->fetchAll(PDO::FET
             --white: #ffffff;
             --gray-dark: #333333;
             --gray-light: #eeeeee;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -112,7 +119,7 @@ $plans = $conn->query("SELECT * FROM plans ORDER BY id DESC")->fetchAll(PDO::FET
         .logout a:hover {
             color: var(--cream);
         }
-
+        
         .main {
             margin-left: 280px;
             padding: 40px;
@@ -130,35 +137,45 @@ $plans = $conn->query("SELECT * FROM plans ORDER BY id DESC")->fetchAll(PDO::FET
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            max-width: 700px;
-            width: 100%;
-            margin: auto;
             margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .form-card form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .form-card label {
             font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
+            color: var(--gray-dark);
         }
 
         .form-card input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 18px;
-            border-radius: 8px;
+            padding: 12px;
             border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-card input:focus {
+            outline: none;
+            border-color: var(--red-medium);
         }
 
         .form-card button {
+            padding: 15px;
             background-color: var(--red-medium);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
             color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease;
         }
 
         .form-card button:hover {
@@ -168,82 +185,73 @@ $plans = $conn->query("SELECT * FROM plans ORDER BY id DESC")->fetchAll(PDO::FET
         table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--white);
+            background-color: var(--white);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-top: 20px;
         }
 
-        table th, table td {
-            padding: 14px;
+        th, td {
+            padding: 15px;
+            text-align: left;
             border-bottom: 1px solid var(--gray-light);
-            text-align: center;
         }
 
-        table th {
-            background: var(--red-dark);
+        thead th {
+            background-color: var(--red-dark);
             color: var(--white);
+            font-weight: 600;
         }
 
-        table tr:hover {
-            background: var(--gray-light);
+        tbody tr:hover {
+            background-color: var(--cream);
         }
 
         .btn {
-            padding: 6px 12px;
+            display: inline-block;
+            padding: 8px 12px;
             border-radius: 6px;
-            font-weight: 600;
             text-decoration: none;
-            color: var(--white);
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
         }
 
         .btn-edit {
-            background: #007bff;
+            background-color: var(--red-medium);
+            color: var(--white);
         }
 
         .btn-edit:hover {
-            background: #0056b3;
+            background-color: #e65c00;
         }
-
+        
         .btn-delete {
-            background: #dc3545;
+            background-color: #ff4d4d;
+            color: var(--white);
         }
 
         .btn-delete:hover {
-            background: #a71d2a;
+            background-color: #ff1a1a;
         }
 
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            .sidebar {
-                position: static;
-                width: 100%;
-                height: auto;
-                padding-bottom: 15px;
-            }
-            .main {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px;
-            }
-        }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <h2>Lunchbox Admin</h2>
-        <a href="dashboard.php">📊 Dashboard</a>
-        <a href="insertProduct.php">🍱 Manage Lunchboxes</a>
-        <a href="insertMenu.php">🥗 Manage Menus</a>
-        <a href="insertPlans.php" class="active">📅 Manage Plans</a>
-        <a href="viewUser.php">📋 View Users</a>
-        <a href="viewProduct.php">📦 Lunchbox Reports</a>
-        <a href="viewMenu.php">📖 Menu Reports</a>
-        <div class="logout">
-            <a href="../login.php">🚪 Logout</a>
+    <a href="dashboard.php" >📊 Dashboard</a>
+    <a href="insertProduct.php" >🍱 Manage Lunchboxes</a>
+    <a href="viewUser.php">📋 View Users</a>
+    <a href="viewProduct.php" >📦 Lunchbox Reports</a>
+    <a href="insertmenu.php">🧾 Insert Menus</a>
+    <a href="viewmenu.php">📖 View Menus</a>
+    <a href="insertPlans.php" class="active">📅 Insert Plans</a>
+             <div class="logout">
+        <a href="../login.php">🚪 Logout</a>
+    </div>
         </div>
     </div>
 
@@ -263,23 +271,27 @@ $plans = $conn->query("SELECT * FROM plans ORDER BY id DESC")->fetchAll(PDO::FET
 
         <h1>All Plans</h1>
         <table>
-            <tr>
-                <th>ID</th>
-                <th>Plan Name</th>
-                <th>Duration (Days)</th>
-                <th>Actions</th>
-            </tr>
-            <?php foreach ($plans as $plan): ?>
+            <thead>
                 <tr>
-                    <td><?php echo $plan['id']; ?></td>
-                    <td><?php echo htmlspecialchars($plan['name']); ?></td>
-                    <td><?php echo $plan['duration_days']; ?></td>
-                    <td>
-                        <a href="editPlans.php?id=<?php echo $plan['id']; ?>" class="btn btn-edit">✏️ Edit</a>
-                        <a href="deletePlans.php?id=<?php echo $plan['id']; ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this plan?');">🗑️ Delete</a>
-                    </td>
+                    <th>ID</th>
+                    <th>Plan Name</th>
+                    <th>Duration (Days)</th>
+                    <th>Actions</th>
                 </tr>
-            <?php endforeach; ?>
+            </thead>
+            <tbody>
+                <?php foreach ($plans as $plan): ?>
+                    <tr>
+                        <td><?php echo $plan['id']; ?></td>
+                        <td><?php echo htmlspecialchars($plan['name']); ?></td>
+                        <td><?php echo $plan['duration_days']; ?></td>
+                        <td>
+                            <a href="editPlans.php?id=<?php echo $plan['id']; ?>" class="btn btn-edit">✏️ Edit</a>
+                            <a href="deletePlans.php?id=<?php echo $plan['id']; ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this plan?');">🗑️ Delete</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
         </table>
     </div>
 

@@ -72,7 +72,7 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
-      <img src="../productImage/loogo.png" alt="Logo" width="300" class="d-inline-block align-text-top">
+      <img src="productImage/loogo.png" alt="Logo" width="280" class="d-inline-block align-text-top">
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
