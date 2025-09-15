@@ -13,7 +13,6 @@ $id = $_GET['id'] ?? 0;
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = $_POST['name'];
     $price = $_POST['price'];
-    $qty = $_POST['qty'];
     $description = $_POST['description'];
 
     $updateImg = "";
@@ -36,12 +35,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     try {
         $sql = "UPDATE lunchboxes 
-                SET name = :name, price = :price, stock_quantity = :qty, description = :description $updateImg 
+                SET name = :name, price = :price, description = :description $updateImg 
                 WHERE id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(":name", $name);
         $stmt->bindParam(":price", $price);
-        $stmt->bindParam(":qty", $qty);
         $stmt->bindParam(":description", $description);
         if ($updateImg) {
             $stmt->bindParam(":image", $imgPath);
@@ -82,7 +80,6 @@ $lunchbox = $stmt->fetch(PDO::FETCH_ASSOC);
     <form method="post" enctype="multipart/form-data">
         <input type="text" name="name" value="<?= htmlspecialchars($lunchbox['name']) ?>" required>
         <input type="number" step="0.01" name="price" value="<?= $lunchbox['price'] ?>" required>
-        <input type="number" name="qty" value="<?= $lunchbox['stock_quantity'] ?>" required>
         <textarea name="description" required><?= htmlspecialchars($lunchbox['description']) ?></textarea>
 
         <p>Current Image:</p>

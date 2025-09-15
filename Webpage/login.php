@@ -70,6 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,8 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login</title>
     <style>
         body {
-            background: linear-gradient(135deg, #4B0082, #6a0dad);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f4ec; /* Cream background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -95,7 +96,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         .login-box h2 {
             margin-bottom: 20px;
-            color: #333;
+            color: #993333; /* Dark red for headers */
+            font-weight: 700;
         }
         .login-box label {
             display: block;
@@ -116,36 +118,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         .login-box button {
             width: 100%;
-            background-color: #4B0082;
+            background-color: #cc3300; /* Medium red for buttons */
             color: #fff;
             border: none;
             padding: 12px;
             font-size: 16px;
             border-radius: 6px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: background-color 0.3s;
         }
         .login-box button:hover {
-            background-color: #5e2d91;
+            background-color: #993333; /* Dark red on hover */
         }
         .error {
-            color: red;
+            color: #cc3300; /* Medium red for errors */
             margin-bottom: 15px;
             font-size: 14px;
+            font-weight: bold;
         }
-        .register-link {
+        .link-container {
             margin-top: 15px;
-            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .register-link a {
-            color: #4B0082;
+        .register-link, .back-link {
+            font-size: 14px;
+            display: block;
+        }
+        .register-link a, .back-link a {
+            color: #993333; /* Dark red for links */
             text-decoration: none;
             font-weight: bold;
         }
-        .register-link a:hover {
+        .register-link a:hover, .back-link a:hover {
             text-decoration: underline;
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="login-box">
@@ -165,8 +177,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit">Login</button>
         </form>
 
-        <div class="register-link">
-            Don’t have an account? <a href="register.php">Register here</a>
+        <div class="link-container">
+            <div class="back-link">
+                <a href="../index.php">← Back</a>
+            </div>
+            <div class="register-link">
+                Don’t have an account? <a href="register.php">Register here</a>
+            </div>
         </div>
     </div>
 </body>

@@ -241,7 +241,7 @@ $plans = $conn->query("SELECT * FROM plans ORDER BY id DESC")->fetchAll(PDO::FET
 <body>
 
     <div class="sidebar">
-        <h2>Lunchbox Admin</h2>
+        <h2>YumYum Admin</h2>
     <a href="dashboard.php" >📊 Dashboard</a>
     <a href="insertProduct.php" >🍱 Manage Lunchboxes</a>
     <a href="viewUser.php">📋 View Users</a>
@@ -249,6 +249,10 @@ $plans = $conn->query("SELECT * FROM plans ORDER BY id DESC")->fetchAll(PDO::FET
     <a href="insertmenu.php">🧾 Insert Menus</a>
     <a href="viewmenu.php">📖 View Menus</a>
     <a href="insertPlans.php" class="active">📅 Insert Plans</a>
+    <a href="adddiscounts.php">📊 Promotion</a>
+    <a href="viewreview.php" >⭐️ View Reviews</a>
+    <a href="admin_subscriptions.php" >📝 View Subscriptions</a>
+
              <div class="logout">
         <a href="../login.php">🚪 Logout</a>
     </div>

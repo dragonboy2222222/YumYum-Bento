@@ -10,17 +10,16 @@ require_once "../dbconnect.php";
 if (isset($_POST["insertBtn"])) {
     $name = $_POST["pname"];
     $price = $_POST["price"];
-    $qty = $_POST["qty"];
     $description = $_POST["description"];
     $fileImage = $_FILES["productImage"];
     $filePath = "../lunchbox_images/" . basename($fileImage['name']);
 
     if (move_uploaded_file($fileImage['tmp_name'], $filePath)) {
         try {
-            $sql = "INSERT INTO lunchboxes (name, description, price, image, stock_quantity) 
-                    VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO lunchboxes (name, description, price, image) 
+                    VALUES (?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $flag = $stmt->execute([$name, $description, $price, $filePath, $qty]);
+            $flag = $stmt->execute([$name, $description, $price, $filePath]);
             $id = $conn->lastInsertId();
             if ($flag) {
                 $_SESSION['message'] = "✅ Lunchbox with ID $id inserted successfully!";
@@ -199,7 +198,7 @@ if (isset($_POST["insertBtn"])) {
 <body>
 
     <div class="sidebar">
-        <h2>Lunchbox Admin</h2>
+        <h2>YumYum Admin</h2>
     <a href="dashboard.php">📊 Dashboard</a>
     <a href="insertProduct.php" class="active">🍱 Manage Lunchboxes</a>
     <a href="viewUser.php">📋 View Users</a>
@@ -207,6 +206,10 @@ if (isset($_POST["insertBtn"])) {
      <a href="insertmenu.php">🧾 Insert Menus</a>
     <a href="viewmenu.php">📖 View Menus</a>
     <a href="insertPlans.php">📅 Insert Plans</a>
+    <a href="adddiscounts.php">📊 Promotion</a>
+    <a href="viewreview.php" >⭐️ View Reviews</a>
+    <a href="admin_subscriptions.php" >📝 View Subscriptions</a>
+
     <div class="logout">
         <a href="../login.php">🚪 Logout</a>
     </div>
@@ -222,8 +225,7 @@ if (isset($_POST["insertBtn"])) {
                 <label>Price</label>
                 <input type="number" step="0.01" name="price" required>
 
-                <label>Quantity (Stock)</label>
-                <input type="number" name="qty" required>
+            
 
                 <label>Description</label>
                 <textarea name="description" rows="4"></textarea>

@@ -15,7 +15,7 @@ if (empty($_SESSION['cart'])) {
     exit;
 }
 
-// Calculate total
+// ✅ Recalculate total using cart
 $total = 0;
 foreach ($_SESSION['cart'] as $item) {
     $total += $item['price'] * $item['quantity'];
@@ -26,36 +26,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $method = $_POST['method'];
     $address = !empty($_POST['address']) ? $_POST['address'] : null;
 
-    // Set status: cash = pending, online = paid
+    // Set status: cash = pending, others = paid
     $status = ($method === 'cash') ? 'pending' : 'paid';
 
     try {
         $conn->beginTransaction();
 
         // 1. Insert checkout
-      $stmt = $conn->prepare("
-    INSERT INTO checkouts (user_id, total_amount, status)
-    VALUES (:user_id, :total_amount, :status)
-");
-$stmt->execute([
-    ':user_id'     => $user_id,
-    ':total_amount'=> $total,
-    ':status'      => $status
-]);
+        $stmt = $conn->prepare("
+            INSERT INTO checkouts (user_id, total_amount, status)
+            VALUES (:user_id, :total_amount, :status)
+        ");
+        $stmt->execute([
+            ':user_id'     => $user_id,
+            ':total_amount'=> $total,
+            ':status'      => $status
+        ]);
         $checkoutId = $conn->lastInsertId();
 
         // 2. Insert subscriptions for each cart item
         foreach ($_SESSION['cart'] as $item) {
             for ($i = 0; $i < $item['quantity']; $i++) {
                 $stmt = $conn->prepare("
-                    INSERT INTO subscriptions (user_id, lunchbox_id, plan_id, start_date, end_date, status, checkout_id)
-                    VALUES (:user_id, :lunchbox_id, :plan_id, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 30 DAY), 'active', :checkout_id)
+                    INSERT INTO subscriptions 
+                        (user_id, lunchbox_id, plan_id, start_date, end_date, status, checkout_id, address)
+                    VALUES 
+                        (:user_id, :lunchbox_id, :plan_id, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 30 DAY), 'active', :checkout_id, :address)
                 ");
                 $stmt->execute([
                     ':user_id'     => $user_id,
                     ':lunchbox_id' => $item['lunchbox_id'],
                     ':plan_id'     => $item['plan_id'],
-                    ':checkout_id' => $checkoutId
+                    ':checkout_id' => $checkoutId,
+                    ':address'     => $address
                 ]);
             }
         }
@@ -84,7 +87,8 @@ $stmt->execute([
                 <p>Checkout ID: <b>" . htmlspecialchars($checkoutId) . "</b></p>
                 <p>Total Amount: <b>$" . number_format($total, 2) . "</b></p>
                 <p>Payment Method: <b>" . htmlspecialchars($method) . "</b></p>
-                <a href='index.php'>Go back to home</a>
+                <p>Delivery Address: <b>" . htmlspecialchars($address) . "</b></p>
+                <a href='home.php'>Go back to home</a>
               </div>";
         exit;
 
@@ -132,8 +136,8 @@ $stmt->execute([
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Delivery Address (optional)</label>
-      <textarea class="form-control" name="address" rows="3"></textarea>
+      <label class="form-label">Delivery Address</label>
+      <textarea class="form-control" name="address" rows="3" required></textarea>
     </div>
 
     <button type="submit" class="btn btn-primary w-100">Confirm & Pay</button>

@@ -8,7 +8,7 @@ if (!isset($_SESSION["username"]) || $_SESSION["role"] !== "admin") {
 require_once "../dbconnect.php";
 
 try {
-    $sql = "SELECT id, name, price, stock_quantity, description, image
+    $sql = "SELECT id, name, price, description, image
             FROM lunchboxes
             ORDER BY id DESC";
     $stmt = $conn->prepare($sql);
@@ -247,7 +247,7 @@ if (isset($_SESSION['message'])) {
 <body>
 
     <div class="sidebar">
-        <h2>Lunchbox Admin</h2>
+        <h2>YumYum Admin</h2>
     <a href="dashboard.php">📊 Dashboard</a>
     <a href="insertProduct.php">🍱 Manage Lunchboxes</a>
     <a href="viewUser.php">👥 View Users</a>
@@ -255,6 +255,10 @@ if (isset($_SESSION['message'])) {
     <a href="insertmenu.php">🧾 Insert Menus</a>
     <a href="viewmenu.php">📖 View Menus</a>
     <a href="insertPlans.php">📅 Insert Plans</a>
+    <a href="adddiscounts.php">📊 Promotion</a>
+    <a href="viewreview.php" >⭐️ View Reviews</a>
+    <a href="admin_subscriptions.php" >📝 View Subscriptions</a>
+
         <div class="logout">
             <a href="../login.php">🚪 Logout</a>
         </div>
@@ -280,7 +284,7 @@ if (isset($_SESSION['message'])) {
                             <h3><?= htmlspecialchars($lb['name']) ?></h3>
                             <div class="price-stock">
                                 <span>$<?= number_format((float)$lb['price'], 2) ?></span>
-                                <span>Stock: <?= (int)$lb['stock_quantity'] ?></span>
+                                
                             </div>
                             <p><?= htmlspecialchars($lb['description']) ?></p>
                             <div class="product-card-actions">

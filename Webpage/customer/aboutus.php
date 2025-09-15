@@ -4,6 +4,27 @@ require_once "../dbconnect.php";
 
 // login is optional here
 $loggedIn = isset($_SESSION["username"]);
+$profilePic = "../productImage/default-avatar.png";
+$cartCount = 0;
+
+if ($loggedIn) {
+    $username = $_SESSION["username"];
+
+    // Fetch user details from database
+    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    $user_id = $stmt->fetchColumn();
+
+    // Fetch profile info for profile picture
+    $stmt = $conn->prepare("SELECT profile_image FROM profiles WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $userProfileImage = $stmt->fetchColumn();
+    if ($userProfileImage) {
+        $profilePic = "../" . $userProfileImage;
+    }
+    // Get cart item count from session
+    $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
+}
 
 // Fetch all lunchboxes for navbar dropdown
 $stmt = $conn->prepare("SELECT * FROM lunchboxes ORDER BY id DESC");
@@ -20,10 +41,12 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Set Poppins as the default font for the body and headings */
         body {
             font-family: 'Poppins', sans-serif;
+            background-color: #f8f4ec;
         }
         
         h1, h2, h3, h4, h5, h6, .navbar-brand {
@@ -41,6 +64,13 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         .navbar .nav-link:hover {
             color: #ffd9d9 !important; /* lighter red hover */
+        }
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
         }
 
         /* Subscribe button */
@@ -76,36 +106,96 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <img src="../productImage/loogo.png" alt="Logo" width="300" class="d-inline-block align-text-top">
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarMenu">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="home.php">Home</a></li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="lunchboxDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Lunchboxes
+        <div class="d-flex w-100 justify-content-between align-items-center">
+            <ul class="navbar-nav d-flex flex-row align-items-center me-auto">
+                <li class="nav-item">
+                    <a class="navbar-brand" href="<?= $loggedIn ? 'home.php' : '../index.php' ?>">
+                        <img src="../productImage/loogo.png" alt="Logo" width="280" class="d-inline-block align-text-top">
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown">
+                </li>
+                
+                <li class="nav-item dropdown d-none d-lg-block">
+                    <a class="nav-link dropdown-toggle" href="#" id="lunchboxDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        LunchBoxes
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown2">
                         <?php foreach ($lunchboxes as $lunchbox): ?>
-                            <li>
-                                <a class="dropdown-item" href="menus.php?lunchbox_id=<?= $lunchbox['id'] ?>">
-                                    <?= htmlspecialchars($lunchbox['name']) ?>
-                                </a>
-                            </li>
+                            <li><a class="dropdown-item" href="lunchbox.php?id=<?= $lunchbox['id'] ?>"><?= htmlspecialchars($lunchbox['name']) ?></a></li>
                         <?php endforeach; ?>
                     </ul>
                 </li>
-                <li class="nav-item"><a class="nav-link active" href="about.php">About Us</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Reviews</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Cart</a></li>
+                <li class="nav-item dropdown d-none d-lg-block">
+                    <a class="nav-link dropdown-toggle" href="#" id="lunchboxDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Menus
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="lunchboxDropdown">
+                        <?php foreach ($lunchboxes as $lunchbox): ?>
+                            <li><a class="dropdown-item" href="menus.php?lunchbox_id=<?= $lunchbox['id'] ?>"><?= htmlspecialchars($lunchbox['name']) ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </li>
+                <li class="nav-item d-none d-lg-block"><a class="nav-link active" href="aboutus.php">About Us</a></li>
+                <li class="nav-item d-none d-lg-block"><a class="nav-link" href="reviews.php">Reviews</a></li>
+                <li class="nav-item d-none d-lg-block"><a class="nav-link" href="faq.php">FAQ</a></li>
             </ul>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarMenu">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown d-lg-none">
+                        <a class="nav-link dropdown-toggle" href="#" id="lunchboxDropdownMobile" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            LunchBoxes
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="lunchboxDropdownMobile">
+                            <?php foreach ($lunchboxes as $lunchbox): ?>
+                                <li><a class="dropdown-item" href="lunchbox.php?id=<?= $lunchbox['id'] ?>"><?= htmlspecialchars($lunchbox['name']) ?></a></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown d-lg-none">
+                        <a class="nav-link dropdown-toggle" href="#" id="lunchboxDropdownMobile2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Menus
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="lunchboxDropdownMobile2">
+                            <?php foreach ($lunchboxes as $lunchbox): ?>
+                                <li><a class="dropdown-item" href="menus.php?lunchbox_id=<?= $lunchbox['id'] ?>"><?= htmlspecialchars($lunchbox['name']) ?></a></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </li>
+                    <li class="nav-item d-lg-none"><a class="nav-link active" href="aboutus.php">About Us</a></li>
+                    <li class="nav-item d-lg-none"><a class="nav-link" href="#">Reviews</a></li>
+                    <li class="nav-item d-lg-none"><a class="nav-link" href="faq.php">FAQ</a></li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="cart.php">
+                            <i class="fas fa-shopping-cart"></i>
+                            <?php if ($cartCount > 0): ?>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    <?= $cartCount ?>
+                                    <span class="visually-hidden">cart items</span>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                    <?php if ($loggedIn): ?>
+                        <li class="nav-item ms-3">
+                            <a href="profile.php">
+                                <img src="<?= htmlspecialchars($profilePic) ?>" alt="Profile" class="profile-img">
+                            </a>
+                        </li>
+                        <li class="nav-item ms-3">
+                            <a href="../logout.php" class="btn btn-outline-light">Logout</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item ms-3">
+                            <a href="../login.php" class="btn btn-outline-light">Login</a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
@@ -117,7 +207,7 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="col-md-6 mb-4 mb-md-0">
                     <h2 class="fw-bold mb-4" style="color:#993333;">Our Story</h2>
                     <p class="lead">
-                        Lunchbox Co. was born from a simple idea: to bring the joy of wholesome, delicious meals to everyone's doorstep. We believe that good food is not just about sustenance; it's about culture, community, and care. Our journey began with a passion for supporting local, family-owned food businesses and a mission to make their culinary traditions accessible to you.
+                        YumYumBento Co. was born from a simple idea: to bring the joy of wholesome, delicious meals to everyone's doorstep. We believe that good food is not just about sustenance; it's about culture, community, and care. Our journey began with a passion for supporting local, family-owned food businesses and a mission to make their culinary traditions accessible to you.
                     </p>
                     <p>
                         We meticulously curate our menus to offer a diverse range of flavors and experiences. Each meal is a tribute to authentic recipes, crafted with the freshest ingredients and packed with love. We're more than just a subscription service; we are a bridge connecting you to the rich tapestry of flavors from local kitchens.
@@ -179,10 +269,10 @@ $lunchboxes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="col-lg-3 col-md-6 mb-4">
                 <h6 class="text-uppercase">Links</h6>
                 <ul class="list-unstyled mb-0">
-                    <li><a href="#" class="text-white">Menu</a></li>
-                    <li><a href="#" class="text-white">Plans</a></li>
-                    <li><a href="#" class="text-white">About Us</a></li>
-                    <li><a href="#" class="text-white">Contact Us</a></li>
+                    <li><a href="term.php" class="text-white">Terms and Conditions</a></li>
+                    <li><a href="policy.php" class="text-white">Privacy Policy</a></li>
+                    <li><a href="aboutus.php" class="text-white">About Us</a></li>
+                    <li><a href="faq.php" class="text-white">FAQ</a></li>
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">

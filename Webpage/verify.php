@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         unset($_SESSION['pending_user']);
     } elseif ($otp_input == $pending['otp']) {
         // OTP correct, login success
-        $_SESSION["id"] = $pending["id"];
+        $_SESSION["user_id"] = $pending["id"];
         $_SESSION["username"] = $pending["username"];
         $_SESSION["role"] = $pending["role"];
 
@@ -40,10 +40,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Verify OTP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --red-dark: #993333;
+            --red-medium: #cc3300;
+            --cream: #f8f4ec;
+            --white: #ffffff;
+            --gray-dark: #333333;
+            --gray-light: #eeeeee;
+        }
+
         body {
-            background: linear-gradient(135deg, #4B0082, #6a0dad);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--cream);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -51,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin: 0;
         }
         .verify-box {
-            background: #fff;
+            background: var(--white);
             padding: 30px 40px;
             border-radius: 12px;
             width: 350px;
@@ -60,14 +72,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         .verify-box h2 {
             margin-bottom: 20px;
-            color: #333;
+            color: var(--red-dark);
+            font-weight: 700;
         }
         .verify-box label {
             display: block;
             text-align: left;
             margin: 10px 0 5px;
             font-size: 14px;
-            color: #555;
+            color: var(--gray-dark);
         }
         .verify-box input[type="text"] {
             width: 100%;
@@ -83,22 +96,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         .verify-box button {
             width: 100%;
-            background-color: #4B0082;
-            color: #fff;
+            background-color: var(--red-medium);
+            color: var(--white);
             border: none;
             padding: 12px;
             font-size: 16px;
             border-radius: 6px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: background-color 0.3s;
         }
         .verify-box button:hover {
-            background-color: #5e2d91;
+            background-color: var(--red-dark);
         }
         .error {
-            color: red;
+            color: var(--red-medium);
             margin-bottom: 15px;
             font-size: 14px;
+            font-weight: bold;
         }
         .note {
             margin-top: 10px;
@@ -121,8 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit">Verify</button>
         </form>
 
-        <p class="note">Check your email for the verification code.  
-        Code expires in 5 minutes.</p>
+        <p class="note">Check your email for the verification code. Code expires in 5 minutes.</p>
     </div>
 </body>
 </html>

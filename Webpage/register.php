@@ -41,17 +41,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Register</title>
     <style>
+        /* Define new color variables */
+        :root {
+            --red-dark: #993333;
+            --red-medium: #cc3300;
+            --cream: #f8f4ec;
+            --white: #ffffff;
+            --gray-dark: #333333;
+            --gray-light: #eeeeee;
+        }
+        
         body {
-            background-color: #f0f2f5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--cream);
+            font-family: 'Poppins', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            margin: 0;
         }
 
         .register-box {
-            background-color: white;
+            background-color: var(--white);
             padding: 30px 40px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -60,14 +71,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         h2 {
             text-align: center;
-            color: #333;
+            color: var(--red-dark);
+            font-weight: 700;
             margin-bottom: 20px;
         }
 
         label {
             display: block;
             margin-bottom: 5px;
-            color: #555;
+            color: var(--gray-dark);
+            font-size: 14px;
         }
 
         input, select {
@@ -77,44 +90,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 5px;
             margin-bottom: 15px;
             font-size: 14px;
+            box-sizing: border-box;
         }
 
         button {
             width: 100%;
-            background-color: #4B0082;
-            color: white;
+            background-color: var(--red-medium);
+            color: var(--white);
             border: none;
             padding: 12px;
             font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #5e2d91;
+            background-color: var(--red-dark);
         }
 
         .message {
             text-align: center;
             margin-top: 15px;
-            color: #2c3e50;
+            color: var(--red-medium);
+            font-weight: bold;
         }
 
-        .login-link {
-            text-align: center;
+        .link-container {
             margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .login-link, .back-link {
             font-size: 14px;
+            display: block;
         }
 
-        .login-link a {
-            color: #4B0082;
+        .login-link a, .back-link a {
+            color: var(--red-dark);
             text-decoration: none;
+            font-weight: bold;
         }
 
-        .login-link a:hover {
+        .login-link a:hover, .back-link a:hover {
             text-decoration: underline;
         }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -138,8 +164,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="message"><?php echo $message; ?></div>
         <?php endif; ?>
 
-        <div class="login-link">
-            Already have an account? <a href="login.php">Login here</a>
+        <div class="link-container">
+            <div class="back-link">
+                <a href="index.php">← Back</a>
+            </div>
+            <div class="login-link">
+                Already have an account? <a href="login.php">Login here</a>
+            </div>
         </div>
     </div>
 
