@@ -30,7 +30,7 @@ function sendDiscountNotification($conn, $discountDetails) {
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'theinpainghtun@gmail.com'; 
-        $mail->Password = 'lhks bkwk rbts pcyl'; 
+        $mail->Password = 'absd pjmt nkil ghjm'; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 

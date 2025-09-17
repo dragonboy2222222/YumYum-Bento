@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
             $mail->Username   = 'theinpainghtun@gmail.com'; 
-            $mail->Password   = 'lhks bkwk rbts pcyl'; // App password
+            $mail->Password   = 'absd pjmt nkil ghjm'; // App password
             $mail->SMTPSecure = 'tls';
             $mail->Port       = 587;
 
@@ -179,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <div class="link-container">
             <div class="back-link">
-                <a href="../index.php">← Back</a>
+                <a href="index.php">← Back</a>
             </div>
             <div class="register-link">
                 Don’t have an account? <a href="register.php">Register here</a>

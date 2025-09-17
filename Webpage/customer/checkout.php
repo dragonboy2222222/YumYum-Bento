@@ -7,7 +7,7 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit;
 }
-$user_id = $_SESSION['id'];
+$user_id = $_SESSION['user_id']; // This line will now work correctly
 
 // Redirect if cart is empty
 if (empty($_SESSION['cart'])) {
@@ -83,12 +83,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['cart'] = [];
 
         echo "<div style='padding:20px; font-family:sans-serif;'>
-                <h2>✅ Thanks, your order is confirmed!</h2>
-                <p>Checkout ID: <b>" . htmlspecialchars($checkoutId) . "</b></p>
-                <p>Total Amount: <b>$" . number_format($total, 2) . "</b></p>
-                <p>Payment Method: <b>" . htmlspecialchars($method) . "</b></p>
-                <p>Delivery Address: <b>" . htmlspecialchars($address) . "</b></p>
-                <a href='home.php'>Go back to home</a>
+                  <h2>✅ Thanks, your order is confirmed!</h2>
+                  <p>Checkout ID: <b>" . htmlspecialchars($checkoutId) . "</b></p>
+                  <p>Total Amount: <b>$" . number_format($total, 2) . "</b></p>
+                  <p>Payment Method: <b>" . htmlspecialchars($method) . "</b></p>
+                  <p>Delivery Address: <b>" . htmlspecialchars($address) . "</b></p>
+                  <a href='home.php'>Go back to home</a>
               </div>";
         exit;
 
@@ -101,47 +101,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Checkout</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
 <div class="container py-5">
-  <h2 class="mb-4">Checkout</h2>
+    <h2 class="mb-4">Checkout</h2>
 
-  <form method="post" class="bg-white p-4 shadow-sm rounded">
-    <h4>Order Summary</h4>
-    <ul class="list-group mb-3">
-      <?php foreach ($_SESSION['cart'] as $item): ?>
-        <li class="list-group-item d-flex justify-content-between">
-          <span>Lunchbox <?= htmlspecialchars($item['lunchbox_id']) ?> (Plan <?= htmlspecialchars($item['plan_id']) ?>) × <?= htmlspecialchars($item['quantity']) ?></span>
-          <strong>$<?= number_format($item['price'] * $item['quantity'], 2) ?></strong>
-        </li>
-      <?php endforeach; ?>
-      <li class="list-group-item d-flex justify-content-between bg-light">
-        <span>Total</span>
-        <strong>$<?= number_format($total, 2) ?></strong>
-      </li>
-    </ul>
+    <form method="post" class="bg-white p-4 shadow-sm rounded">
+        <h4>Order Summary</h4>
+        <ul class="list-group mb-3">
+            <?php foreach ($_SESSION['cart'] as $item): ?>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Lunchbox <?= htmlspecialchars($item['lunchbox_id']) ?> (Plan <?= htmlspecialchars($item['plan_id']) ?>) × <?= htmlspecialchars($item['quantity']) ?></span>
+                    <strong>$<?= number_format($item['price'] * $item['quantity'], 2) ?></strong>
+                </li>
+            <?php endforeach; ?>
+            <li class="list-group-item d-flex justify-content-between bg-light">
+                <span>Total</span>
+                <strong>$<?= number_format($total, 2) ?></strong>
+            </li>
+        </ul>
 
-    <div class="mb-3">
-      <label class="form-label">Payment Method</label>
-      <select name="method" class="form-select" required>
-        <option value="credit_card">Credit Card</option>
-        <option value="paypal">PayPal</option>
-        <option value="bank_transfer">Bank Transfer</option>
-        <option value="cash">Cash</option>
-      </select>
-    </div>
+        <div class="mb-3">
+            <label class="form-label">Payment Method</label>
+            <select name="method" class="form-select" required>
+                <option value="credit_card">Credit Card</option>
+                <option value="paypal">PayPal</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="cash">Cash</option>
+            </select>
+        </div>
 
-    <div class="mb-3">
-      <label class="form-label">Delivery Address</label>
-      <textarea class="form-control" name="address" rows="3" required></textarea>
-    </div>
+        <div class="mb-3">
+            <label class="form-label">Delivery Address</label>
+            <textarea class="form-control" name="address" rows="3" required></textarea>
+        </div>
 
-    <button type="submit" class="btn btn-primary w-100">Confirm & Pay</button>
-  </form>
+        <button type="submit" class="btn btn-primary w-100">Confirm & Pay</button>
+    </form>
 </div>
 
 </body>
